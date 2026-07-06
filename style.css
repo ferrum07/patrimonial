@@ -1,0 +1,503 @@
+/* ============================================================
+   Variables y reset
+   ============================================================ */
+:root {
+  --azul: #2563eb;
+  --azul-oscuro: #1d4ed8;
+  --verde: #16a34a;
+  --verde-claro: #dcfce7;
+  --rojo: #dc2626;
+  --rojo-claro: #fee2e2;
+  --morado: #7c3aed;
+  --amarillo: #d97706;
+  --gris: #6b7280;
+  --gris-claro: #f3f4f6;
+  --borde: #e5e7eb;
+  --texto: #1f2937;
+  --sombra: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --sombra-lg: 0 10px 25px rgba(0, 0, 0, 0.12);
+  --radio: 14px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* El atributo [hidden] debe ocultar SIEMPRE, aunque una clase
+   defina display:flex (como .modal o .cargando). */
+[hidden] {
+  display: none !important;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: #f9fafb;
+  color: var(--texto);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  padding: max(20px, env(safe-area-inset-top)) 16px max(20px, env(safe-area-inset-bottom));
+}
+
+/* ============================================================
+   Pantalla de carga
+   ============================================================ */
+.cargando {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gris);
+  font-size: 1rem;
+  background: #f9fafb;
+}
+
+/* ============================================================
+   Pantalla de autenticación
+   ============================================================ */
+.auth-screen {
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-card {
+  background: #fff;
+  border: 1px solid var(--borde);
+  border-radius: 20px;
+  box-shadow: var(--sombra-lg);
+  padding: 36px 28px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.auth-logo { font-size: 2.6rem; line-height: 1; }
+.auth-title { font-size: 1.5rem; font-weight: 700; margin-top: 12px; }
+.auth-sub { color: var(--gris); font-size: 0.9rem; margin: 6px 0 24px; }
+
+.auth-form {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.auth-toggle { margin-top: 20px; font-size: 0.88rem; color: var(--gris); }
+.auth-toggle a { color: var(--azul); font-weight: 600; text-decoration: none; margin-left: 4px; }
+.auth-toggle a:hover { text-decoration: underline; }
+
+/* ============================================================
+   Layout principal
+   ============================================================ */
+.container { max-width: 1040px; margin: 0 auto; }
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.app-header h1 { font-size: 1.6rem; font-weight: 700; }
+.subtitle { color: var(--gris); font-size: 0.85rem; margin-top: 2px; }
+
+.card {
+  background: #fff;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  padding: 22px;
+  margin-bottom: 20px;
+}
+
+.card h2 { font-size: 1.15rem; margin-bottom: 16px; }
+
+.app-footer {
+  text-align: center;
+  color: var(--gris);
+  font-size: 0.78rem;
+  padding: 8px 0 4px;
+}
+
+/* ============================================================
+   Tarjetas de resumen
+   ============================================================ */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.stat-card {
+  background: #fff;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stat-num { font-size: 1.6rem; font-weight: 800; line-height: 1.1; }
+.stat-label { font-size: 0.8rem; color: var(--gris); font-weight: 600; }
+
+.stat-ok   { border-left: 4px solid var(--verde); }
+.stat-ok .stat-num   { color: var(--verde); }
+.stat-pend { border-left: 4px solid var(--rojo); }
+.stat-pend .stat-num { color: var(--rojo); }
+.stat-mes  { border-left: 4px solid var(--morado); }
+.stat-mes .stat-num  { color: var(--morado); }
+
+/* ============================================================
+   Formulario
+   ============================================================ */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr) auto;
+  gap: 14px;
+  align-items: end;
+}
+
+.campo { display: flex; flex-direction: column; }
+
+.campo label {
+  font-size: 0.83rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #374151;
+}
+
+.campo input {
+  padding: 11px 12px;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  font-size: 1rem; /* 16px evita el zoom automático en iOS */
+  transition: border-color 0.15s, box-shadow 0.15s;
+  width: 100%;
+}
+
+.campo input:focus {
+  outline: none;
+  border-color: var(--azul);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.campo-boton { display: flex; flex-direction: column; gap: 8px; }
+
+/* ============================================================
+   Botones
+   ============================================================ */
+.btn {
+  cursor: pointer;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  padding: 11px 18px;
+  transition: background 0.15s, opacity 0.15s, transform 0.05s;
+  white-space: nowrap;
+}
+
+.btn:active { transform: scale(0.98); }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn-block { width: 100%; }
+
+.btn-primary { background: var(--azul); color: #fff; }
+.btn-primary:hover:not(:disabled) { background: var(--azul-oscuro); }
+
+.btn-ghost { background: transparent; color: var(--gris); border: 1px solid var(--borde); }
+.btn-ghost:hover { background: var(--gris-claro); }
+
+.btn-editar {
+  background: #eff6ff;
+  color: var(--azul);
+  padding: 8px 12px;
+}
+.btn-editar:hover { background: #dbeafe; }
+
+.btn-recibo {
+  background: #f5f3ff;
+  color: var(--morado);
+  padding: 8px 12px;
+}
+.btn-recibo:hover { background: #ede9fe; }
+
+.btn-historial {
+  background: var(--gris-claro);
+  color: var(--gris);
+  padding: 8px 12px;
+}
+.btn-historial:hover { background: #e5e7eb; }
+
+.btn-eliminar { background: var(--rojo-claro); color: var(--rojo); padding: 8px 12px; }
+.btn-eliminar:hover { background: #fecaca; }
+
+/* ============================================================
+   Cabecera de la tabla + buscador + filtros
+   ============================================================ */
+.tabla-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.tabla-controles { display: flex; gap: 8px; align-items: center; flex: 1; justify-content: flex-end; }
+
+.buscador {
+  padding: 9px 12px;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  font-size: 0.95rem;
+  min-width: 180px;
+}
+.buscador:focus {
+  outline: none;
+  border-color: var(--azul);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.filtros { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+
+.chip {
+  cursor: pointer;
+  border: 1px solid var(--borde);
+  background: #fff;
+  color: var(--gris);
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  transition: all 0.15s;
+}
+.chip:hover { background: var(--gris-claro); }
+.chip-activo { background: var(--azul); color: #fff; border-color: var(--azul); }
+
+/* ============================================================
+   Tabla (escritorio)
+   ============================================================ */
+.tabla-wrapper { overflow-x: auto; }
+.tabla { width: 100%; border-collapse: collapse; }
+
+.tabla th,
+.tabla td {
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--borde);
+  font-size: 0.92rem;
+}
+
+.tabla th {
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--gris);
+  font-weight: 700;
+}
+
+.tabla tbody tr:hover { background: #fafafa; }
+
+.col-center { text-align: center; }
+.col-right  { text-align: right; }
+td.col-center { text-align: center; }
+td.col-right  { text-align: right; }
+
+.contacto-sec { color: var(--gris); font-size: 0.82rem; }
+.importe-val { font-weight: 700; }
+.fecha-pago { display: block; color: var(--gris); font-size: 0.72rem; margin-top: 3px; }
+.acciones-cell { display: flex; gap: 6px; justify-content: center; }
+
+/* ============================================================
+   Botón de estado de pago
+   ============================================================ */
+.estado-btn {
+  cursor: pointer;
+  border: none;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 6px 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.15s;
+}
+
+.estado-btn::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.estado-pagado { background: var(--verde-claro); color: var(--verde); }
+.estado-pagado:hover { background: #bbf7d0; }
+.estado-pendiente { background: var(--rojo-claro); color: var(--rojo); }
+.estado-pendiente:hover { background: #fecaca; }
+
+/* ============================================================
+   Vista de tarjetas (móvil / iPhone)
+   ============================================================ */
+.lista-cards { display: none; }
+
+.inq-card {
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.inq-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.inq-card-nombre { font-weight: 700; font-size: 1.05rem; }
+
+.inq-card-importe {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--azul);
+}
+.inq-card-importe small { font-size: 0.72rem; color: var(--gris); font-weight: 600; }
+
+.inq-card-dato {
+  font-size: 0.88rem;
+  color: var(--gris);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  word-break: break-word;
+}
+
+.inq-card-acciones { display: flex; gap: 8px; margin-top: 6px; }
+.inq-card-acciones .estado-btn,
+.inq-card-acciones .btn { flex: 1; justify-content: center; }
+
+/* ============================================================
+   Varios
+   ============================================================ */
+.sin-datos { text-align: center; color: var(--gris); padding: 32px 0; }
+
+/* ============================================================
+   Modal (historial de pagos)
+   ============================================================ */
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-fondo {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.modal-card {
+  position: relative;
+  background: #fff;
+  border-radius: var(--radio);
+  box-shadow: var(--sombra-lg);
+  width: 100%;
+  max-width: 460px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--borde);
+}
+
+.modal-head h3 { font-size: 1.1rem; }
+
+.modal-body {
+  padding: 12px 20px 20px;
+  overflow-y: auto;
+}
+
+.pago-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--borde);
+}
+.pago-item:last-child { border-bottom: none; }
+
+.pago-periodo { font-weight: 700; text-transform: capitalize; }
+.pago-detalle { font-size: 0.8rem; color: var(--gris); }
+.pago-importe { font-weight: 700; color: var(--verde); }
+
+/* ============================================================
+   Mensajes flotantes
+   ============================================================ */
+.mensaje {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-shadow: var(--sombra-lg);
+  max-width: 90%;
+}
+
+.mensaje-error { background: #fef2f2; color: var(--rojo); border: 1px solid #fca5a5; }
+.mensaje-ok { background: #f0fdf4; color: var(--verde); border: 1px solid #86efac; }
+
+/* ============================================================
+   Responsivo — móvil / iPhone
+   ============================================================ */
+@media (max-width: 900px) {
+  .stats { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 760px) {
+  .form-grid { grid-template-columns: 1fr; }
+  .app-header h1 { font-size: 1.3rem; }
+
+  .stat-card { padding: 14px; }
+  .stat-num { font-size: 1.35rem; }
+  .stat-label { font-size: 0.72rem; }
+
+  /* Cambiamos tabla por tarjetas */
+  .tabla-wrapper { display: none; }
+  .lista-cards { display: block; }
+
+  .tabla-controles { flex: 1; }
+  .buscador { flex: 1; min-width: 0; }
+}
+
+@media (max-width: 420px) {
+  .stats { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#2563eb" />
+  <title>Gestión de Alquileres</title>
+  <!-- Rutas relativas para GitHub Pages -->
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <!-- Banner de mensajes / errores (global) -->
+  <div id="mensaje" class="mensaje" hidden></div>
+
+  <!-- ============================================================
+       PANTALLA DE LOGIN / REGISTRO
+       ============================================================ -->
+  <main id="pantalla-auth" class="auth-screen" hidden>
+    <div class="auth-card">
+      <div class="auth-logo">🏠</div>
+      <h1 class="auth-title">Gestión de Alquileres</h1>
+      <p class="auth-sub">Accede para controlar los pagos de tus inquilinos</p>
+
+      <form id="form-auth" class="auth-form" autocomplete="on">
+        <div class="campo">
+          <label for="auth-email">Correo electrónico</label>
+          <input type="email" id="auth-email" placeholder="tucorreo@email.com" required />
+        </div>
+        <div class="campo">
+          <label for="auth-pass">Contraseña</label>
+          <input type="password" id="auth-pass" placeholder="Mínimo 6 caracteres" minlength="6" required />
+        </div>
+
+        <button type="submit" id="btn-auth" class="btn btn-primary btn-block">Iniciar sesión</button>
+      </form>
+
+      <p class="auth-toggle">
+        <span id="auth-toggle-texto">¿No tienes cuenta?</span>
+        <a href="#" id="auth-toggle-link">Regístrate</a>
+      </p>
+    </div>
+  </main>
+
+  <!-- ============================================================
+       APLICACIÓN (visible tras iniciar sesión)
+       ============================================================ -->
+  <div id="pantalla-app" class="container" hidden>
+    <header class="app-header">
+      <div class="app-header-info">
+        <h1>🏠 Gestión de Alquileres</h1>
+        <p class="subtitle" id="usuario-email">—</p>
+      </div>
+      <button id="btn-logout" class="btn btn-ghost">Cerrar sesión</button>
+    </header>
+
+    <!-- Tarjetas de resumen -->
+    <section class="stats">
+      <div class="stat-card">
+        <span class="stat-num" id="stat-total">0</span>
+        <span class="stat-label">Inquilinos</span>
+      </div>
+      <div class="stat-card stat-ok">
+        <span class="stat-num" id="stat-cobrado">0 €</span>
+        <span class="stat-label">Cobrado</span>
+      </div>
+      <div class="stat-card stat-pend">
+        <span class="stat-num" id="stat-pendiente">0 €</span>
+        <span class="stat-label">Pendiente de cobro</span>
+      </div>
+      <div class="stat-card stat-mes">
+        <span class="stat-num" id="stat-mensual">0 €</span>
+        <span class="stat-label">Ingreso mensual total</span>
+      </div>
+    </section>
+
+    <!-- Formulario para añadir inquilino -->
+    <section class="card">
+      <h2 id="form-titulo">Añadir inquilino</h2>
+      <form id="form-inquilino" class="form-grid" autocomplete="off">
+        <input type="hidden" id="edit-id" />
+        <div class="campo">
+          <label for="nombre">Nombre</label>
+          <input type="text" id="nombre" placeholder="Ej. Ana García" required />
+        </div>
+        <div class="campo">
+          <label for="correo">Correo</label>
+          <input type="email" id="correo" placeholder="ana@correo.com" required />
+        </div>
+        <div class="campo">
+          <label for="telefono">Teléfono</label>
+          <input type="tel" id="telefono" placeholder="600 123 456" required />
+        </div>
+        <div class="campo">
+          <label for="importe">Importe (€/mes)</label>
+          <input type="number" id="importe" placeholder="750" min="0" step="0.01" required />
+        </div>
+        <div class="campo">
+          <label for="dia-cobro">Día de cobro</label>
+          <input type="number" id="dia-cobro" placeholder="1" min="1" max="31" required />
+        </div>
+        <div class="campo campo-boton">
+          <button type="submit" id="btn-anadir" class="btn btn-primary btn-block">＋ Añadir</button>
+          <button type="button" id="btn-cancelar" class="btn btn-ghost btn-block" hidden>Cancelar</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Listado de inquilinos -->
+    <section class="card">
+      <div class="tabla-header">
+        <h2>Inquilinos registrados</h2>
+        <div class="tabla-controles">
+          <input type="search" id="buscador" class="buscador" placeholder="🔍 Buscar…" />
+          <button id="btn-nuevo-mes" class="btn btn-ghost">🔄 Nuevo mes</button>
+          <button id="btn-exportar" class="btn btn-ghost">⬇ CSV</button>
+        </div>
+      </div>
+
+      <!-- Filtros -->
+      <div class="filtros">
+        <button class="chip chip-activo" data-filtro="todos">Todos</button>
+        <button class="chip" data-filtro="pagado">Pagados</button>
+        <button class="chip" data-filtro="pendiente">Pendientes</button>
+      </div>
+
+      <!-- Vista de tabla (escritorio) -->
+      <div class="tabla-wrapper">
+        <table class="tabla">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Contacto</th>
+              <th class="col-right">Importe</th>
+              <th class="col-center">Cobro</th>
+              <th class="col-center">Estado</th>
+              <th class="col-center">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-body"></tbody>
+        </table>
+      </div>
+
+      <!-- Vista de tarjetas (móvil / iPhone) -->
+      <div id="lista-cards" class="lista-cards"></div>
+
+      <p id="sin-datos" class="sin-datos" hidden>No hay inquilinos registrados todavía.</p>
+    </section>
+
+    <footer class="app-footer">Gestión de Alquileres · tus datos están protegidos por tu cuenta</footer>
+  </div>
+
+  <!-- ============================================================
+       MODAL: Historial de pagos de un inquilino
+       ============================================================ -->
+  <div id="modal-historial" class="modal" hidden>
+    <div class="modal-fondo" data-cerrar-modal></div>
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3 id="modal-titulo">Historial de pagos</h3>
+        <button id="modal-cerrar" class="btn btn-ghost" data-cerrar-modal>✕</button>
+      </div>
+      <div id="modal-body" class="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- Pantalla de carga inicial -->
+  <div id="cargando" class="cargando">Cargando…</div>
+
+  <!-- Librería de Supabase vía CDN (compatible con navegador) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- jsPDF para generar recibos en PDF -->
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <!-- Backend de demostración (localStorage) — se usa si no hay credenciales -->
+  <script src="./demo-backend.js"></script>
+  <!-- Lógica de la aplicación (ruta relativa) -->
+  <script src="./script.js"></script>
+</body>
+</html>
