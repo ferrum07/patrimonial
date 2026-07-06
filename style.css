@@ -20,21 +20,6 @@
   --radio: 0px;
 }
 
-/* ------------------------------------------------------------
-   Modo oscuro: se invierte papel/tinta, el azul y el mostaza
-   se mantienen vivos para que sigan "explotando" sobre negro.
-   ------------------------------------------------------------ */
-[data-theme="dark"] {
-  --papel: #121212;
-  --superficie: #1B1B1F;
-  --tinta: #F2ECDD;
-  --gris: #A9A297;
-  --gris-claro: #2A2A2E;
-  --azul: #5B8DFF;
-  --naranja: #FF8552;
-  --amarillo: #FFD60A;
-}
-
 * {
   box-sizing: border-box;
   margin: 0;
@@ -62,26 +47,6 @@ h1, h2, h3 {
   letter-spacing: 0.03em;
   font-weight: 800;
 }
-
-/* ============================================================
-   Interruptor de modo oscuro (flotante)
-   ============================================================ */
-.tema-toggle {
-  position: fixed;
-  top: max(16px, env(safe-area-inset-top));
-  right: 16px;
-  z-index: 1200;
-  width: 42px;
-  height: 42px;
-  border: 3px solid var(--tinta);
-  background: var(--amarillo);
-  color: var(--tinta);
-  font-size: 1.1rem;
-  cursor: pointer;
-  box-shadow: var(--sombra-dura-sm);
-  transition: transform 0.1s;
-}
-.tema-toggle:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--tinta); }
 
 /* ============================================================
    Pantalla de carga

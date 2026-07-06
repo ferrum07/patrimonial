@@ -6,30 +6,6 @@
 const SUPABASE_URL = "https://mrtjbpsqfrapciutcpki.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_EZQnMBx2fi7615U2ah2fDw_RAbot47v";
 
-/* ============================================================
-   MODO OSCURO
-   Se guarda la preferencia en localStorage para recordarla.
-   ============================================================ */
-(function inicializarTema() {
-  const guardado = localStorage.getItem("tema");
-  const prefiereOscuro = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-  const oscuro = guardado ? guardado === "oscuro" : prefiereOscuro;
-  aplicarTema(oscuro);
-})();
-
-function aplicarTema(oscuro) {
-  document.documentElement.setAttribute("data-theme", oscuro ? "dark" : "light");
-  const btn = document.getElementById("btn-tema");
-  if (btn) btn.textContent = oscuro ? "☀️" : "🌙";
-}
-
-document.getElementById("btn-tema").addEventListener("click", () => {
-  const oscuroActual = document.documentElement.getAttribute("data-theme") === "dark";
-  const nuevoOscuro = !oscuroActual;
-  aplicarTema(nuevoOscuro);
-  localStorage.setItem("tema", nuevoOscuro ? "oscuro" : "claro");
-});
-
 /* ------------------------------------------------------------
    Inicialización del cliente de Supabase (cargado por CDN)
    Si faltan las credenciales, NO reventamos el script: mostramos
