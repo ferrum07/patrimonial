@@ -1,23 +1,30 @@
 /* ============================================================
-   ESTILO CONSTRUCTIVISTA — paleta y variables
-   Azul cobalto / naranja / mostaza / marino, formas geométricas
-   duras, tipografía en mayúsculas y sombras desplazadas.
+   ESTILO "APPLE / iOS"
+   Fondo gris agrupado, tarjetas blancas redondeadas, azul de
+   sistema, insignias de color suave ("tinted") y tipografía
+   San Francisco. Inspirado en Ajustes / Salud / Wallet de iOS.
    ============================================================ */
 :root {
-  --azul: #1D4FBF;
-  --azul-oscuro: #14377F;
-  --naranja: #F2622E;
-  --amarillo: #F4C400;
-  --papel: #F2ECDD;      /* fondo general, tono "papel" */
+  --azul: #007AFF;
+  --azul-oscuro: #0060DF;
+  --verde: #34C759;
+  --verde-tinte: rgba(52, 199, 89, 0.15);
+  --verde-texto: #248A3D;
+  --rojo: #FF3B30;
+  --rojo-tinte: rgba(255, 59, 48, 0.12);
+  --rojo-texto: #D70015;
+  --naranja: #FF9500;
+  --morado: #AF52DE;
+  --fondo: #F2F2F7;      /* fondo general, gris agrupado de iOS */
   --superficie: #FFFFFF; /* fondo de tarjetas */
-  --tinta: #16213E;      /* texto, bordes y sombras duras (marino oscuro) */
-  --gris: #6b6b64;
-  --gris-claro: #E7E0CC;
-  --borde: var(--tinta);
-  --texto: var(--tinta);
-  --sombra-dura: 5px 5px 0 var(--tinta);
-  --sombra-dura-sm: 3px 3px 0 var(--tinta);
-  --radio: 0px;
+  --relleno: #EFEFF4;    /* relleno de inputs / filas */
+  --texto: #1C1C1E;
+  --gris: #8E8E93;       /* texto secundario */
+  --gris-claro: #E5E5EA; /* separadores */
+  --sombra: 0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.05);
+  --sombra-flotante: 0 12px 40px rgba(0,0,0,0.12);
+  --radio: 16px;
+  --radio-sm: 12px;
 }
 
 * {
@@ -33,19 +40,12 @@
 }
 
 body {
-  font-family: "Segoe UI", Arial, Helvetica, sans-serif;
-  background: var(--papel);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: var(--fondo);
   color: var(--texto);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   padding: max(20px, env(safe-area-inset-top)) 16px max(20px, env(safe-area-inset-bottom));
-  transition: background 0.2s, color 0.2s;
-}
-
-h1, h2, h3 {
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  font-weight: 800;
 }
 
 /* ============================================================
@@ -57,11 +57,10 @@ h1, h2, h3 {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--tinta);
+  color: var(--gris);
   font-size: 1rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  background: var(--papel);
+  font-weight: 500;
+  background: var(--fondo);
 }
 
 /* ============================================================
@@ -75,51 +74,51 @@ h1, h2, h3 {
 }
 
 .auth-card {
-  position: relative;
   background: var(--superficie);
-  border: 3px solid var(--tinta);
-  box-shadow: 8px 8px 0 var(--azul);
-  padding: 40px 28px 32px;
+  border-radius: 24px;
+  box-shadow: var(--sombra-flotante);
+  padding: 40px 30px 34px;
   width: 100%;
   max-width: 400px;
   text-align: center;
 }
 
-/* Acento geométrico constructivista: franja diagonal */
-.auth-card::before {
-  content: "";
-  position: absolute;
-  top: -3px;
-  left: -3px;
-  width: 70px;
-  height: 14px;
-  background: var(--azul);
-  transform: rotate(-45deg) translate(-18px, -6px);
+/* "Icono de app" redondeado, como un icono real de iOS */
+.auth-logo {
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 18px;
+  font-size: 2.1rem;
+  background: linear-gradient(135deg, #0A84FF, #5AC8FA);
+  border-radius: 18px;
+  box-shadow: 0 10px 24px rgba(10, 132, 255, 0.35);
 }
 
-.auth-logo { font-size: 2.6rem; line-height: 1; }
-.auth-title { font-size: 1.5rem; margin-top: 14px; }
-.auth-sub { color: var(--gris); font-size: 0.9rem; margin: 8px 0 26px; text-transform: none; }
+.auth-title { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; }
+.auth-sub { color: var(--gris); font-size: 0.9rem; margin: 6px 0 26px; }
 
 .auth-form {
   text-align: left;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
 .auth-hint {
   margin-top: 16px;
   font-size: 0.8rem;
   color: var(--texto);
-  background: var(--amarillo);
-  border: 2px solid var(--tinta);
-  padding: 8px 12px;
+  background: var(--relleno);
+  border-radius: var(--radio-sm);
+  padding: 10px 14px;
 }
-.auth-hint strong { color: var(--tinta); }
+.auth-hint strong { color: var(--azul); }
 
 .auth-toggle { margin-top: 20px; font-size: 0.88rem; color: var(--gris); }
-.auth-toggle a { color: var(--azul); font-weight: 700; text-decoration: none; margin-left: 4px; }
+.auth-toggle a { color: var(--azul); font-weight: 600; text-decoration: none; margin-left: 4px; }
 .auth-toggle a:hover { text-decoration: underline; }
 
 /* ============================================================
@@ -132,30 +131,35 @@ h1, h2, h3 {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 24px;
-  border-bottom: 4px solid var(--tinta);
-  padding-bottom: 16px;
+  margin-bottom: 22px;
+  padding: 4px 2px 18px;
 }
 
-.app-header h1 { font-size: 1.5rem; }
-.subtitle { color: var(--gris); font-size: 0.85rem; margin-top: 2px; text-transform: none; }
+.app-header h1 { font-size: 1.7rem; font-weight: 700; letter-spacing: -0.02em; }
+.subtitle { color: var(--gris); font-size: 0.85rem; margin-top: 2px; }
 
 .card {
   background: var(--superficie);
-  border: 3px solid var(--tinta);
-  box-shadow: var(--sombra-dura);
-  padding: 22px;
-  margin-bottom: 24px;
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  padding: 20px;
+  margin-bottom: 20px;
 }
 
-.card h2 { font-size: 1.1rem; margin-bottom: 16px; }
+.card h2 {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--gris);
+  margin-bottom: 14px;
+}
 
 .app-footer {
   text-align: center;
   color: var(--gris);
   font-size: 0.78rem;
   padding: 8px 0 4px;
-  text-transform: none;
 }
 
 /* ============================================================
@@ -164,29 +168,26 @@ h1, h2, h3 {
 .stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
-  margin-bottom: 24px;
+  gap: 12px;
+  margin-bottom: 20px;
 }
 
 .stat-card {
   background: var(--superficie);
-  border: 3px solid var(--tinta);
-  box-shadow: var(--sombra-dura-sm);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
   padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
 }
 
-.stat-num { font-size: 1.6rem; font-weight: 800; line-height: 1.1; }
-.stat-label { font-size: 0.78rem; color: var(--gris); font-weight: 700; text-transform: uppercase; }
+.stat-num { font-size: 1.55rem; font-weight: 700; line-height: 1.15; letter-spacing: -0.01em; }
+.stat-label { font-size: 0.76rem; color: var(--gris); font-weight: 600; }
 
-.stat-ok   { border-left: 8px solid var(--azul); }
-.stat-ok .stat-num   { color: var(--azul); }
-.stat-pend { border-left: 8px solid var(--naranja); }
-.stat-pend .stat-num { color: var(--naranja); }
-.stat-mes  { border-left: 8px solid var(--amarillo); }
-.stat-mes .stat-num  { color: var(--texto); }
+.stat-ok .stat-num   { color: var(--verde-texto); }
+.stat-pend .stat-num { color: var(--rojo-texto); }
+.stat-mes .stat-num  { color: var(--naranja); }
 
 /* ============================================================
    Calendario mensual de pagos
@@ -197,67 +198,68 @@ h1, h2, h3 {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .cal-nav {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .btn-cal-nav {
-  background: var(--tinta);
-  color: var(--papel);
+  background: var(--relleno);
+  color: var(--azul);
   border: none;
-  width: 36px;
-  height: 36px;
-  font-size: 0.95rem;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 0.85rem;
   cursor: pointer;
 }
-.btn-cal-nav:hover { background: var(--azul); }
+.btn-cal-nav:hover { background: var(--gris-claro); }
+.btn-cal-nav:active { opacity: 0.6; }
 
 .cal-mes {
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  min-width: 140px;
+  font-weight: 600;
+  text-transform: capitalize;
+  min-width: 130px;
   text-align: center;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
 }
 
 .cal-lista {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 12px;
+  gap: 10px;
 }
 
 .cal-item {
   display: flex;
   align-items: center;
   gap: 10px;
-  border: 3px solid var(--tinta);
-  background: var(--superficie);
+  border: none;
+  border-radius: var(--radio-sm);
+  background: var(--relleno);
   padding: 12px 14px;
   cursor: pointer;
   text-align: left;
   font-family: inherit;
-  transition: transform 0.08s;
+  transition: transform 0.08s, opacity 0.08s;
 }
-.cal-item:active { transform: translate(2px, 2px); }
+.cal-item:active { transform: scale(0.98); opacity: 0.85; }
 
-.cal-pagado { border-color: var(--azul); box-shadow: 3px 3px 0 var(--azul); }
-.cal-pendiente { border-color: var(--naranja); box-shadow: 3px 3px 0 var(--naranja); }
+.cal-pagado { background: var(--verde-tinte); }
+.cal-pendiente { background: var(--rojo-tinte); }
 
-.cal-emoji { font-size: 1.3rem; line-height: 1; }
-.cal-nombre { flex: 1; font-weight: 700; font-size: 0.9rem; }
-.cal-importe { font-size: 0.82rem; color: var(--gris); font-weight: 700; }
+.cal-emoji { font-size: 1.2rem; line-height: 1; }
+.cal-nombre { flex: 1; font-weight: 600; font-size: 0.9rem; }
+.cal-importe { font-size: 0.82rem; color: var(--gris); font-weight: 600; }
 
 .cal-ayuda {
   margin-top: 14px;
   font-size: 0.78rem;
   color: var(--gris);
-  text-transform: none;
 }
 
 /* ============================================================
@@ -274,27 +276,27 @@ h1, h2, h3 {
 
 .campo label {
   font-size: 0.78rem;
-  font-weight: 700;
+  font-weight: 600;
   margin-bottom: 6px;
-  color: var(--texto);
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
+  color: var(--gris);
 }
 
 .campo input {
   padding: 11px 12px;
-  border: 2px solid var(--tinta);
-  border-radius: var(--radio);
-  background: var(--superficie);
+  border: none;
+  border-radius: var(--radio-sm);
+  background: var(--relleno);
   color: var(--texto);
   font-size: 1rem; /* 16px evita el zoom automático en iOS */
   transition: box-shadow 0.15s;
   width: 100%;
 }
 
+.campo input::placeholder { color: var(--gris); }
+
 .campo input:focus {
   outline: none;
-  box-shadow: 3px 3px 0 var(--azul);
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3);
 }
 
 .campo-boton { display: flex; flex-direction: column; gap: 8px; }
@@ -304,66 +306,56 @@ h1, h2, h3 {
    ============================================================ */
 .btn {
   cursor: pointer;
-  border: 2px solid var(--tinta);
-  border-radius: var(--radio);
-  font-size: 0.85rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
+  border: none;
+  border-radius: var(--radio-sm);
+  font-size: 0.88rem;
+  font-weight: 600;
   padding: 11px 18px;
-  transition: transform 0.08s, box-shadow 0.08s;
+  transition: opacity 0.1s, transform 0.05s;
   white-space: nowrap;
-  background: var(--superficie);
-  color: var(--texto);
+  background: var(--relleno);
+  color: var(--azul);
 }
 
-.btn:active { transform: translate(2px, 2px); }
-.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn:active { opacity: 0.6; transform: scale(0.98); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
 .btn-block { width: 100%; }
 
 .btn-primary {
   background: var(--azul);
   color: #fff;
-  border-color: var(--tinta);
-  box-shadow: var(--sombra-dura-sm);
 }
 .btn-primary:hover:not(:disabled) { background: var(--azul-oscuro); }
-.btn-primary:active:not(:disabled) { box-shadow: 1px 1px 0 var(--tinta); }
 
 .btn-ghost {
-  background: var(--superficie);
+  background: var(--relleno);
   color: var(--texto);
-  border: 2px solid var(--tinta);
 }
 .btn-ghost:hover { background: var(--gris-claro); }
 
 .btn-editar {
-  background: var(--amarillo);
-  color: var(--tinta);
+  background: rgba(0, 122, 255, 0.12);
+  color: var(--azul);
   padding: 8px 12px;
 }
-.btn-editar:hover { filter: brightness(0.95); }
 
 .btn-recibo {
-  background: var(--superficie);
-  color: var(--texto);
+  background: rgba(175, 82, 222, 0.12);
+  color: var(--morado);
   padding: 8px 12px;
 }
-.btn-recibo:hover { background: var(--gris-claro); }
 
 .btn-historial {
-  background: var(--superficie);
+  background: var(--relleno);
   color: var(--texto);
   padding: 8px 12px;
 }
-.btn-historial:hover { background: var(--gris-claro); }
 
 .btn-eliminar {
-  background: var(--tinta);
-  color: var(--papel);
+  background: var(--rojo-tinte);
+  color: var(--rojo-texto);
   padding: 8px 12px;
 }
-.btn-eliminar:hover { background: var(--naranja); }
 
 /* ============================================================
    Cabecera de la tabla + buscador + filtros
@@ -380,35 +372,43 @@ h1, h2, h3 {
 .tabla-controles { display: flex; gap: 8px; align-items: center; flex: 1; justify-content: flex-end; }
 
 .buscador {
-  padding: 9px 12px;
-  border: 2px solid var(--tinta);
-  border-radius: var(--radio);
-  background: var(--superficie);
+  padding: 9px 14px;
+  border: none;
+  border-radius: var(--radio-sm);
+  background: var(--relleno);
   color: var(--texto);
   font-size: 0.95rem;
   min-width: 180px;
 }
+.buscador::placeholder { color: var(--gris); }
 .buscador:focus {
   outline: none;
-  box-shadow: 3px 3px 0 var(--azul);
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3);
 }
 
-.filtros { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+/* Filtros con aspecto de "control segmentado" de iOS */
+.filtros {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 16px;
+  background: var(--relleno);
+  border-radius: var(--radio-sm);
+  padding: 3px;
+}
 
 .chip {
+  flex: 1;
   cursor: pointer;
-  border: 2px solid var(--tinta);
-  background: var(--superficie);
-  color: var(--texto);
-  border-radius: var(--radio);
+  border: none;
+  background: transparent;
+  color: var(--gris);
+  border-radius: 9px;
   font-size: 0.82rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  padding: 6px 14px;
-  transition: all 0.1s;
+  font-weight: 600;
+  padding: 7px 12px;
+  transition: all 0.15s;
 }
-.chip:hover { background: var(--gris-claro); }
-.chip-activo { background: var(--tinta); color: var(--papel); border-color: var(--tinta); }
+.chip-activo { background: var(--superficie); color: var(--texto); box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
 
 /* ============================================================
    Tabla (escritorio)
@@ -420,20 +420,19 @@ h1, h2, h3 {
 .tabla td {
   padding: 12px 14px;
   text-align: left;
-  border-bottom: 2px solid var(--tinta);
+  border-bottom: 1px solid var(--gris-claro);
   font-size: 0.9rem;
 }
 
 .tabla th {
   font-size: 0.72rem;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
   color: var(--gris);
-  font-weight: 800;
-  border-bottom: 3px solid var(--tinta);
+  font-weight: 700;
 }
 
-.tabla tbody tr:hover { background: var(--gris-claro); }
+.tabla tbody tr:hover { background: var(--relleno); }
 
 .col-center { text-align: center; }
 .col-right  { text-align: right; }
@@ -441,30 +440,29 @@ td.col-center { text-align: center; }
 td.col-right  { text-align: right; }
 
 .contacto-sec { color: var(--gris); font-size: 0.82rem; }
-.importe-val { font-weight: 800; }
-.fecha-pago { display: block; color: var(--gris); font-size: 0.7rem; margin-top: 3px; text-transform: none; }
+.importe-val { font-weight: 700; }
+.fecha-pago { display: block; color: var(--gris); font-size: 0.7rem; margin-top: 3px; }
 .acciones-cell { display: flex; gap: 6px; justify-content: center; }
 
 /* ============================================================
-   Botón de estado de pago
+   Insignia de estado de pago (estilo "tinted badge" de iOS)
    ============================================================ */
 .estado-btn {
   cursor: pointer;
-  border: 2px solid var(--tinta);
-  border-radius: var(--radio);
+  border: none;
+  border-radius: 999px;
   font-size: 0.78rem;
-  font-weight: 800;
-  text-transform: uppercase;
+  font-weight: 700;
   padding: 6px 12px;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  transition: transform 0.08s;
+  transition: opacity 0.1s;
 }
-.estado-btn:active { transform: translate(1px, 1px); }
+.estado-btn:active { opacity: 0.6; }
 
-.estado-pagado { background: var(--azul); color: #fff; border-color: var(--azul); }
-.estado-pendiente { background: var(--naranja); color: #fff; border-color: var(--naranja); }
+.estado-pagado { background: var(--verde-tinte); color: var(--verde-texto); }
+.estado-pendiente { background: var(--rojo-tinte); color: var(--rojo-texto); }
 
 /* ============================================================
    Vista de tarjetas (móvil / iPhone)
@@ -472,11 +470,12 @@ td.col-right  { text-align: right; }
 .lista-cards { display: none; }
 
 .inq-card {
-  border: 3px solid var(--tinta);
+  border: none;
   background: var(--superficie);
-  box-shadow: var(--sombra-dura-sm);
+  box-shadow: var(--sombra);
+  border-radius: var(--radio);
   padding: 16px;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -489,14 +488,14 @@ td.col-right  { text-align: right; }
   gap: 10px;
 }
 
-.inq-card-nombre { font-weight: 800; font-size: 1.05rem; }
+.inq-card-nombre { font-weight: 700; font-size: 1.05rem; }
 
 .inq-card-importe {
   font-size: 1.1rem;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--azul);
 }
-.inq-card-importe small { font-size: 0.7rem; color: var(--gris); font-weight: 700; text-transform: uppercase; }
+.inq-card-importe small { font-size: 0.7rem; color: var(--gris); font-weight: 600; }
 
 .inq-card-dato {
   font-size: 0.86rem;
@@ -505,7 +504,6 @@ td.col-right  { text-align: right; }
   align-items: center;
   gap: 8px;
   word-break: break-word;
-  text-transform: none;
 }
 
 .inq-card-acciones { display: flex; gap: 8px; margin-top: 6px; }
@@ -515,10 +513,10 @@ td.col-right  { text-align: right; }
 /* ============================================================
    Varios
    ============================================================ */
-.sin-datos { text-align: center; color: var(--gris); padding: 32px 0; text-transform: none; }
+.sin-datos { text-align: center; color: var(--gris); padding: 32px 0; }
 
 /* ============================================================
-   Modal (historial de pagos)
+   Modal (historial de pagos) — estilo "hoja" de iOS
    ============================================================ */
 .modal {
   position: fixed;
@@ -533,16 +531,16 @@ td.col-right  { text-align: right; }
 .modal-fondo {
   position: absolute;
   inset: 0;
-  background: rgba(22, 33, 62, 0.6);
+  background: rgba(0, 0, 0, 0.35);
 }
 
 .modal-card {
   position: relative;
   background: var(--superficie);
-  border: 3px solid var(--tinta);
-  box-shadow: 8px 8px 0 var(--azul);
+  border-radius: 20px;
+  box-shadow: var(--sombra-flotante);
   width: 100%;
-  max-width: 460px;
+  max-width: 440px;
   max-height: 85vh;
   display: flex;
   flex-direction: column;
@@ -554,10 +552,20 @@ td.col-right  { text-align: right; }
   align-items: center;
   justify-content: space-between;
   padding: 18px 20px;
-  border-bottom: 3px solid var(--tinta);
+  border-bottom: 1px solid var(--gris-claro);
 }
 
-.modal-head h3 { font-size: 1rem; }
+.modal-head h3 { font-size: 1.02rem; font-weight: 700; }
+
+#modal-cerrar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--relleno);
+  color: var(--gris);
+  padding: 0;
+  font-size: 0.8rem;
+}
 
 .modal-body {
   padding: 12px 20px 20px;
@@ -570,16 +578,16 @@ td.col-right  { text-align: right; }
   justify-content: space-between;
   gap: 10px;
   padding: 12px 0;
-  border-bottom: 2px solid var(--gris-claro);
+  border-bottom: 1px solid var(--gris-claro);
 }
 .pago-item:last-child { border-bottom: none; }
 
-.pago-periodo { font-weight: 800; text-transform: uppercase; }
-.pago-detalle { font-size: 0.8rem; color: var(--gris); text-transform: none; }
-.pago-importe { font-weight: 800; color: var(--azul); }
+.pago-periodo { font-weight: 700; text-transform: capitalize; }
+.pago-detalle { font-size: 0.8rem; color: var(--gris); }
+.pago-importe { font-weight: 700; color: var(--azul); }
 
 /* ============================================================
-   Mensajes flotantes
+   Mensajes flotantes (banner tipo notificación de iOS)
    ============================================================ */
 .mensaje {
   position: fixed;
@@ -588,16 +596,15 @@ td.col-right  { text-align: right; }
   transform: translateX(-50%);
   z-index: 1000;
   padding: 12px 20px;
-  border: 2px solid var(--tinta);
+  border-radius: var(--radio-sm);
   font-size: 0.88rem;
-  font-weight: 700;
-  box-shadow: var(--sombra-dura-sm);
+  font-weight: 600;
+  box-shadow: var(--sombra-flotante);
   max-width: 90%;
-  text-transform: none;
 }
 
-.mensaje-error { background: var(--naranja); color: #fff; }
-.mensaje-ok { background: var(--amarillo); color: var(--tinta); }
+.mensaje-error { background: var(--rojo-tinte); color: var(--rojo-texto); }
+.mensaje-ok { background: var(--verde-tinte); color: var(--verde-texto); }
 
 /* ============================================================
    Responsivo — móvil / iPhone
@@ -608,7 +615,7 @@ td.col-right  { text-align: right; }
 
 @media (max-width: 760px) {
   .form-grid { grid-template-columns: 1fr; }
-  .app-header h1 { font-size: 1.2rem; }
+  .app-header h1 { font-size: 1.35rem; }
 
   .stat-card { padding: 14px; }
   .stat-num { font-size: 1.3rem; }
