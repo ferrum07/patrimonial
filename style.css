@@ -1,22 +1,38 @@
 /* ============================================================
-   Variables y reset
+   ESTILO CONSTRUCTIVISTA — paleta y variables
+   Azul cobalto / naranja / mostaza / marino, formas geométricas
+   duras, tipografía en mayúsculas y sombras desplazadas.
    ============================================================ */
 :root {
-  --azul: #2563eb;
-  --azul-oscuro: #1d4ed8;
-  --verde: #16a34a;
-  --verde-claro: #dcfce7;
-  --rojo: #dc2626;
-  --rojo-claro: #fee2e2;
-  --morado: #7c3aed;
-  --amarillo: #d97706;
-  --gris: #6b7280;
-  --gris-claro: #f3f4f6;
-  --borde: #e5e7eb;
-  --texto: #1f2937;
-  --sombra: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
-  --sombra-lg: 0 10px 25px rgba(0, 0, 0, 0.12);
-  --radio: 14px;
+  --azul: #1D4FBF;
+  --azul-oscuro: #14377F;
+  --naranja: #F2622E;
+  --amarillo: #F4C400;
+  --papel: #F2ECDD;      /* fondo general, tono "papel" */
+  --superficie: #FFFFFF; /* fondo de tarjetas */
+  --tinta: #16213E;      /* texto, bordes y sombras duras (marino oscuro) */
+  --gris: #6b6b64;
+  --gris-claro: #E7E0CC;
+  --borde: var(--tinta);
+  --texto: var(--tinta);
+  --sombra-dura: 5px 5px 0 var(--tinta);
+  --sombra-dura-sm: 3px 3px 0 var(--tinta);
+  --radio: 0px;
+}
+
+/* ------------------------------------------------------------
+   Modo oscuro: se invierte papel/tinta, el azul y el mostaza
+   se mantienen vivos para que sigan "explotando" sobre negro.
+   ------------------------------------------------------------ */
+[data-theme="dark"] {
+  --papel: #121212;
+  --superficie: #1B1B1F;
+  --tinta: #F2ECDD;
+  --gris: #A9A297;
+  --gris-claro: #2A2A2E;
+  --azul: #5B8DFF;
+  --naranja: #FF8552;
+  --amarillo: #FFD60A;
 }
 
 * {
@@ -32,13 +48,40 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  background: #f9fafb;
+  font-family: "Segoe UI", Arial, Helvetica, sans-serif;
+  background: var(--papel);
   color: var(--texto);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   padding: max(20px, env(safe-area-inset-top)) 16px max(20px, env(safe-area-inset-bottom));
+  transition: background 0.2s, color 0.2s;
 }
+
+h1, h2, h3 {
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-weight: 800;
+}
+
+/* ============================================================
+   Interruptor de modo oscuro (flotante)
+   ============================================================ */
+.tema-toggle {
+  position: fixed;
+  top: max(16px, env(safe-area-inset-top));
+  right: 16px;
+  z-index: 1200;
+  width: 42px;
+  height: 42px;
+  border: 3px solid var(--tinta);
+  background: var(--amarillo);
+  color: var(--tinta);
+  font-size: 1.1rem;
+  cursor: pointer;
+  box-shadow: var(--sombra-dura-sm);
+  transition: transform 0.1s;
+}
+.tema-toggle:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--tinta); }
 
 /* ============================================================
    Pantalla de carga
@@ -49,9 +92,11 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--gris);
+  color: var(--tinta);
   font-size: 1rem;
-  background: #f9fafb;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: var(--papel);
 }
 
 /* ============================================================
@@ -65,19 +110,31 @@ body {
 }
 
 .auth-card {
-  background: #fff;
-  border: 1px solid var(--borde);
-  border-radius: 20px;
-  box-shadow: var(--sombra-lg);
-  padding: 36px 28px;
+  position: relative;
+  background: var(--superficie);
+  border: 3px solid var(--tinta);
+  box-shadow: 8px 8px 0 var(--azul);
+  padding: 40px 28px 32px;
   width: 100%;
   max-width: 400px;
   text-align: center;
 }
 
+/* Acento geométrico constructivista: franja diagonal */
+.auth-card::before {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  width: 70px;
+  height: 14px;
+  background: var(--azul);
+  transform: rotate(-45deg) translate(-18px, -6px);
+}
+
 .auth-logo { font-size: 2.6rem; line-height: 1; }
-.auth-title { font-size: 1.5rem; font-weight: 700; margin-top: 12px; }
-.auth-sub { color: var(--gris); font-size: 0.9rem; margin: 6px 0 24px; }
+.auth-title { font-size: 1.5rem; margin-top: 14px; }
+.auth-sub { color: var(--gris); font-size: 0.9rem; margin: 8px 0 26px; text-transform: none; }
 
 .auth-form {
   text-align: left;
@@ -89,15 +146,15 @@ body {
 .auth-hint {
   margin-top: 16px;
   font-size: 0.8rem;
-  color: var(--gris);
-  background: var(--gris-claro);
-  border-radius: 8px;
+  color: var(--texto);
+  background: var(--amarillo);
+  border: 2px solid var(--tinta);
   padding: 8px 12px;
 }
-.auth-hint strong { color: var(--texto); }
+.auth-hint strong { color: var(--tinta); }
 
 .auth-toggle { margin-top: 20px; font-size: 0.88rem; color: var(--gris); }
-.auth-toggle a { color: var(--azul); font-weight: 600; text-decoration: none; margin-left: 4px; }
+.auth-toggle a { color: var(--azul); font-weight: 700; text-decoration: none; margin-left: 4px; }
 .auth-toggle a:hover { text-decoration: underline; }
 
 /* ============================================================
@@ -111,27 +168,29 @@ body {
   justify-content: space-between;
   gap: 16px;
   margin-bottom: 24px;
+  border-bottom: 4px solid var(--tinta);
+  padding-bottom: 16px;
 }
 
-.app-header h1 { font-size: 1.6rem; font-weight: 700; }
-.subtitle { color: var(--gris); font-size: 0.85rem; margin-top: 2px; }
+.app-header h1 { font-size: 1.5rem; }
+.subtitle { color: var(--gris); font-size: 0.85rem; margin-top: 2px; text-transform: none; }
 
 .card {
-  background: #fff;
-  border: 1px solid var(--borde);
-  border-radius: var(--radio);
-  box-shadow: var(--sombra);
+  background: var(--superficie);
+  border: 3px solid var(--tinta);
+  box-shadow: var(--sombra-dura);
   padding: 22px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
-.card h2 { font-size: 1.15rem; margin-bottom: 16px; }
+.card h2 { font-size: 1.1rem; margin-bottom: 16px; }
 
 .app-footer {
   text-align: center;
   color: var(--gris);
   font-size: 0.78rem;
   padding: 8px 0 4px;
+  text-transform: none;
 }
 
 /* ============================================================
@@ -141,29 +200,100 @@ body {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 14px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .stat-card {
-  background: #fff;
-  border: 1px solid var(--borde);
-  border-radius: var(--radio);
-  box-shadow: var(--sombra);
-  padding: 18px;
+  background: var(--superficie);
+  border: 3px solid var(--tinta);
+  box-shadow: var(--sombra-dura-sm);
+  padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
 .stat-num { font-size: 1.6rem; font-weight: 800; line-height: 1.1; }
-.stat-label { font-size: 0.8rem; color: var(--gris); font-weight: 600; }
+.stat-label { font-size: 0.78rem; color: var(--gris); font-weight: 700; text-transform: uppercase; }
 
-.stat-ok   { border-left: 4px solid var(--verde); }
-.stat-ok .stat-num   { color: var(--verde); }
-.stat-pend { border-left: 4px solid var(--rojo); }
-.stat-pend .stat-num { color: var(--rojo); }
-.stat-mes  { border-left: 4px solid var(--morado); }
-.stat-mes .stat-num  { color: var(--morado); }
+.stat-ok   { border-left: 8px solid var(--azul); }
+.stat-ok .stat-num   { color: var(--azul); }
+.stat-pend { border-left: 8px solid var(--naranja); }
+.stat-pend .stat-num { color: var(--naranja); }
+.stat-mes  { border-left: 8px solid var(--amarillo); }
+.stat-mes .stat-num  { color: var(--texto); }
+
+/* ============================================================
+   Calendario mensual de pagos
+   ============================================================ */
+.cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.cal-nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-cal-nav {
+  background: var(--tinta);
+  color: var(--papel);
+  border: none;
+  width: 36px;
+  height: 36px;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+.btn-cal-nav:hover { background: var(--azul); }
+
+.cal-mes {
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  min-width: 140px;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.cal-lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.cal-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 3px solid var(--tinta);
+  background: var(--superficie);
+  padding: 12px 14px;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  transition: transform 0.08s;
+}
+.cal-item:active { transform: translate(2px, 2px); }
+
+.cal-pagado { border-color: var(--azul); box-shadow: 3px 3px 0 var(--azul); }
+.cal-pendiente { border-color: var(--naranja); box-shadow: 3px 3px 0 var(--naranja); }
+
+.cal-emoji { font-size: 1.3rem; line-height: 1; }
+.cal-nombre { flex: 1; font-weight: 700; font-size: 0.9rem; }
+.cal-importe { font-size: 0.82rem; color: var(--gris); font-weight: 700; }
+
+.cal-ayuda {
+  margin-top: 14px;
+  font-size: 0.78rem;
+  color: var(--gris);
+  text-transform: none;
+}
 
 /* ============================================================
    Formulario
@@ -178,25 +308,28 @@ body {
 .campo { display: flex; flex-direction: column; }
 
 .campo label {
-  font-size: 0.83rem;
-  font-weight: 600;
+  font-size: 0.78rem;
+  font-weight: 700;
   margin-bottom: 6px;
-  color: #374151;
+  color: var(--texto);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
 .campo input {
   padding: 11px 12px;
-  border: 1px solid var(--borde);
-  border-radius: 10px;
+  border: 2px solid var(--tinta);
+  border-radius: var(--radio);
+  background: var(--superficie);
+  color: var(--texto);
   font-size: 1rem; /* 16px evita el zoom automático en iOS */
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition: box-shadow 0.15s;
   width: 100%;
 }
 
 .campo input:focus {
   outline: none;
-  border-color: var(--azul);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  box-shadow: 3px 3px 0 var(--azul);
 }
 
 .campo-boton { display: flex; flex-direction: column; gap: 8px; }
@@ -206,48 +339,66 @@ body {
    ============================================================ */
 .btn {
   cursor: pointer;
-  border: none;
-  border-radius: 10px;
-  font-size: 0.92rem;
-  font-weight: 600;
+  border: 2px solid var(--tinta);
+  border-radius: var(--radio);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
   padding: 11px 18px;
-  transition: background 0.15s, opacity 0.15s, transform 0.05s;
+  transition: transform 0.08s, box-shadow 0.08s;
   white-space: nowrap;
+  background: var(--superficie);
+  color: var(--texto);
 }
 
-.btn:active { transform: scale(0.98); }
-.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn:active { transform: translate(2px, 2px); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn-block { width: 100%; }
 
-.btn-primary { background: var(--azul); color: #fff; }
+.btn-primary {
+  background: var(--azul);
+  color: #fff;
+  border-color: var(--tinta);
+  box-shadow: var(--sombra-dura-sm);
+}
 .btn-primary:hover:not(:disabled) { background: var(--azul-oscuro); }
+.btn-primary:active:not(:disabled) { box-shadow: 1px 1px 0 var(--tinta); }
 
-.btn-ghost { background: transparent; color: var(--gris); border: 1px solid var(--borde); }
+.btn-ghost {
+  background: var(--superficie);
+  color: var(--texto);
+  border: 2px solid var(--tinta);
+}
 .btn-ghost:hover { background: var(--gris-claro); }
 
 .btn-editar {
-  background: #eff6ff;
-  color: var(--azul);
+  background: var(--amarillo);
+  color: var(--tinta);
   padding: 8px 12px;
 }
-.btn-editar:hover { background: #dbeafe; }
+.btn-editar:hover { filter: brightness(0.95); }
 
 .btn-recibo {
-  background: #f5f3ff;
-  color: var(--morado);
+  background: var(--superficie);
+  color: var(--texto);
   padding: 8px 12px;
 }
-.btn-recibo:hover { background: #ede9fe; }
+.btn-recibo:hover { background: var(--gris-claro); }
 
 .btn-historial {
-  background: var(--gris-claro);
-  color: var(--gris);
+  background: var(--superficie);
+  color: var(--texto);
   padding: 8px 12px;
 }
-.btn-historial:hover { background: #e5e7eb; }
+.btn-historial:hover { background: var(--gris-claro); }
 
-.btn-eliminar { background: var(--rojo-claro); color: var(--rojo); padding: 8px 12px; }
-.btn-eliminar:hover { background: #fecaca; }
+.btn-eliminar {
+  background: var(--tinta);
+  color: var(--papel);
+  padding: 8px 12px;
+}
+.btn-eliminar:hover { background: var(--naranja); }
 
 /* ============================================================
    Cabecera de la tabla + buscador + filtros
@@ -265,32 +416,34 @@ body {
 
 .buscador {
   padding: 9px 12px;
-  border: 1px solid var(--borde);
-  border-radius: 10px;
+  border: 2px solid var(--tinta);
+  border-radius: var(--radio);
+  background: var(--superficie);
+  color: var(--texto);
   font-size: 0.95rem;
   min-width: 180px;
 }
 .buscador:focus {
   outline: none;
-  border-color: var(--azul);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  box-shadow: 3px 3px 0 var(--azul);
 }
 
 .filtros { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
 
 .chip {
   cursor: pointer;
-  border: 1px solid var(--borde);
-  background: #fff;
-  color: var(--gris);
-  border-radius: 999px;
-  font-size: 0.85rem;
-  font-weight: 600;
+  border: 2px solid var(--tinta);
+  background: var(--superficie);
+  color: var(--texto);
+  border-radius: var(--radio);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
   padding: 6px 14px;
-  transition: all 0.15s;
+  transition: all 0.1s;
 }
 .chip:hover { background: var(--gris-claro); }
-.chip-activo { background: var(--azul); color: #fff; border-color: var(--azul); }
+.chip-activo { background: var(--tinta); color: var(--papel); border-color: var(--tinta); }
 
 /* ============================================================
    Tabla (escritorio)
@@ -302,19 +455,20 @@ body {
 .tabla td {
   padding: 12px 14px;
   text-align: left;
-  border-bottom: 1px solid var(--borde);
-  font-size: 0.92rem;
+  border-bottom: 2px solid var(--tinta);
+  font-size: 0.9rem;
 }
 
 .tabla th {
-  font-size: 0.76rem;
+  font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--gris);
-  font-weight: 700;
+  font-weight: 800;
+  border-bottom: 3px solid var(--tinta);
 }
 
-.tabla tbody tr:hover { background: #fafafa; }
+.tabla tbody tr:hover { background: var(--gris-claro); }
 
 .col-center { text-align: center; }
 .col-right  { text-align: right; }
@@ -322,8 +476,8 @@ td.col-center { text-align: center; }
 td.col-right  { text-align: right; }
 
 .contacto-sec { color: var(--gris); font-size: 0.82rem; }
-.importe-val { font-weight: 700; }
-.fecha-pago { display: block; color: var(--gris); font-size: 0.72rem; margin-top: 3px; }
+.importe-val { font-weight: 800; }
+.fecha-pago { display: block; color: var(--gris); font-size: 0.7rem; margin-top: 3px; text-transform: none; }
 .acciones-cell { display: flex; gap: 6px; justify-content: center; }
 
 /* ============================================================
@@ -331,29 +485,21 @@ td.col-right  { text-align: right; }
    ============================================================ */
 .estado-btn {
   cursor: pointer;
-  border: none;
-  border-radius: 999px;
-  font-size: 0.8rem;
-  font-weight: 700;
-  padding: 6px 14px;
+  border: 2px solid var(--tinta);
+  border-radius: var(--radio);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 6px 12px;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  transition: background 0.15s;
+  transition: transform 0.08s;
 }
+.estado-btn:active { transform: translate(1px, 1px); }
 
-.estado-btn::before {
-  content: "";
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: currentColor;
-}
-
-.estado-pagado { background: var(--verde-claro); color: var(--verde); }
-.estado-pagado:hover { background: #bbf7d0; }
-.estado-pendiente { background: var(--rojo-claro); color: var(--rojo); }
-.estado-pendiente:hover { background: #fecaca; }
+.estado-pagado { background: var(--azul); color: #fff; border-color: var(--azul); }
+.estado-pendiente { background: var(--naranja); color: #fff; border-color: var(--naranja); }
 
 /* ============================================================
    Vista de tarjetas (móvil / iPhone)
@@ -361,10 +507,11 @@ td.col-right  { text-align: right; }
 .lista-cards { display: none; }
 
 .inq-card {
-  border: 1px solid var(--borde);
-  border-radius: 12px;
+  border: 3px solid var(--tinta);
+  background: var(--superficie);
+  box-shadow: var(--sombra-dura-sm);
   padding: 16px;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -377,22 +524,23 @@ td.col-right  { text-align: right; }
   gap: 10px;
 }
 
-.inq-card-nombre { font-weight: 700; font-size: 1.05rem; }
+.inq-card-nombre { font-weight: 800; font-size: 1.05rem; }
 
 .inq-card-importe {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   font-weight: 800;
   color: var(--azul);
 }
-.inq-card-importe small { font-size: 0.72rem; color: var(--gris); font-weight: 600; }
+.inq-card-importe small { font-size: 0.7rem; color: var(--gris); font-weight: 700; text-transform: uppercase; }
 
 .inq-card-dato {
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   color: var(--gris);
   display: flex;
   align-items: center;
   gap: 8px;
   word-break: break-word;
+  text-transform: none;
 }
 
 .inq-card-acciones { display: flex; gap: 8px; margin-top: 6px; }
@@ -402,7 +550,7 @@ td.col-right  { text-align: right; }
 /* ============================================================
    Varios
    ============================================================ */
-.sin-datos { text-align: center; color: var(--gris); padding: 32px 0; }
+.sin-datos { text-align: center; color: var(--gris); padding: 32px 0; text-transform: none; }
 
 /* ============================================================
    Modal (historial de pagos)
@@ -420,14 +568,14 @@ td.col-right  { text-align: right; }
 .modal-fondo {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(22, 33, 62, 0.6);
 }
 
 .modal-card {
   position: relative;
-  background: #fff;
-  border-radius: var(--radio);
-  box-shadow: var(--sombra-lg);
+  background: var(--superficie);
+  border: 3px solid var(--tinta);
+  box-shadow: 8px 8px 0 var(--azul);
   width: 100%;
   max-width: 460px;
   max-height: 85vh;
@@ -441,10 +589,10 @@ td.col-right  { text-align: right; }
   align-items: center;
   justify-content: space-between;
   padding: 18px 20px;
-  border-bottom: 1px solid var(--borde);
+  border-bottom: 3px solid var(--tinta);
 }
 
-.modal-head h3 { font-size: 1.1rem; }
+.modal-head h3 { font-size: 1rem; }
 
 .modal-body {
   padding: 12px 20px 20px;
@@ -457,13 +605,13 @@ td.col-right  { text-align: right; }
   justify-content: space-between;
   gap: 10px;
   padding: 12px 0;
-  border-bottom: 1px solid var(--borde);
+  border-bottom: 2px solid var(--gris-claro);
 }
 .pago-item:last-child { border-bottom: none; }
 
-.pago-periodo { font-weight: 700; text-transform: capitalize; }
-.pago-detalle { font-size: 0.8rem; color: var(--gris); }
-.pago-importe { font-weight: 700; color: var(--verde); }
+.pago-periodo { font-weight: 800; text-transform: uppercase; }
+.pago-detalle { font-size: 0.8rem; color: var(--gris); text-transform: none; }
+.pago-importe { font-weight: 800; color: var(--azul); }
 
 /* ============================================================
    Mensajes flotantes
@@ -475,15 +623,16 @@ td.col-right  { text-align: right; }
   transform: translateX(-50%);
   z-index: 1000;
   padding: 12px 20px;
-  border-radius: 10px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  box-shadow: var(--sombra-lg);
+  border: 2px solid var(--tinta);
+  font-size: 0.88rem;
+  font-weight: 700;
+  box-shadow: var(--sombra-dura-sm);
   max-width: 90%;
+  text-transform: none;
 }
 
-.mensaje-error { background: #fef2f2; color: var(--rojo); border: 1px solid #fca5a5; }
-.mensaje-ok { background: #f0fdf4; color: var(--verde); border: 1px solid #86efac; }
+.mensaje-error { background: var(--naranja); color: #fff; }
+.mensaje-ok { background: var(--amarillo); color: var(--tinta); }
 
 /* ============================================================
    Responsivo — móvil / iPhone
@@ -494,11 +643,11 @@ td.col-right  { text-align: right; }
 
 @media (max-width: 760px) {
   .form-grid { grid-template-columns: 1fr; }
-  .app-header h1 { font-size: 1.3rem; }
+  .app-header h1 { font-size: 1.2rem; }
 
   .stat-card { padding: 14px; }
-  .stat-num { font-size: 1.35rem; }
-  .stat-label { font-size: 0.72rem; }
+  .stat-num { font-size: 1.3rem; }
+  .stat-label { font-size: 0.68rem; }
 
   /* Cambiamos tabla por tarjetas */
   .tabla-wrapper { display: none; }
@@ -506,6 +655,8 @@ td.col-right  { text-align: right; }
 
   .tabla-controles { flex: 1; }
   .buscador { flex: 1; min-width: 0; }
+
+  .cal-lista { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 420px) {

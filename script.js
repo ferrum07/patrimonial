@@ -6,6 +6,30 @@
 const SUPABASE_URL = "https://mrtjbpsqfrapciutcpki.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_EZQnMBx2fi7615U2ah2fDw_RAbot47v";
 
+/* ============================================================
+   MODO OSCURO
+   Se guarda la preferencia en localStorage para recordarla.
+   ============================================================ */
+(function inicializarTema() {
+  const guardado = localStorage.getItem("tema");
+  const prefiereOscuro = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const oscuro = guardado ? guardado === "oscuro" : prefiereOscuro;
+  aplicarTema(oscuro);
+})();
+
+function aplicarTema(oscuro) {
+  document.documentElement.setAttribute("data-theme", oscuro ? "dark" : "light");
+  const btn = document.getElementById("btn-tema");
+  if (btn) btn.textContent = oscuro ? "☀️" : "🌙";
+}
+
+document.getElementById("btn-tema").addEventListener("click", () => {
+  const oscuroActual = document.documentElement.getAttribute("data-theme") === "dark";
+  const nuevoOscuro = !oscuroActual;
+  aplicarTema(nuevoOscuro);
+  localStorage.setItem("tema", nuevoOscuro ? "oscuro" : "claro");
+});
+
 /* ------------------------------------------------------------
    Inicialización del cliente de Supabase (cargado por CDN)
    Si faltan las credenciales, NO reventamos el script: mostramos
@@ -61,6 +85,11 @@ const modalHistorial = document.getElementById("modal-historial");
 const modalTitulo    = document.getElementById("modal-titulo");
 const modalBody      = document.getElementById("modal-body");
 
+const calPrev        = document.getElementById("cal-prev");
+const calNext        = document.getElementById("cal-next");
+const calMesLabel    = document.getElementById("calendario-mes-label");
+const calLista       = document.getElementById("calendario-lista");
+
 const statTotal      = document.getElementById("stat-total");
 const statCobrado    = document.getElementById("stat-cobrado");
 const statPendiente  = document.getElementById("stat-pendiente");
@@ -76,6 +105,9 @@ const TABLA_PAGOS = "pagos";
 const MESES = ["enero","febrero","marzo","abril","mayo","junio",
                "julio","agosto","septiembre","octubre","noviembre","diciembre"];
 
+/* Mes que se está viendo actualmente en el calendario ('YYYY-MM') */
+let mesCalendario = null;
+
 /* Periodo actual en formato 'YYYY-MM' (ej. "2026-07") */
 function periodoActual() {
   const d = new Date();
@@ -86,6 +118,13 @@ function periodoActual() {
 function periodoLabel(p) {
   const [y, m] = (p || "").split("-");
   return `${MESES[Number(m) - 1] || "?"} ${y || ""}`.trim();
+}
+
+/* Suma (o resta) meses a un periodo 'YYYY-MM' */
+function sumarMeses(periodo, delta) {
+  const [y, m] = periodo.split("-").map(Number);
+  const d = new Date(y, m - 1 + delta, 1);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
 }
 
 /* ------------------------------------------------------------
@@ -227,7 +266,99 @@ async function cargarInquilinos() {
 
   inquilinosCache = data || [];
   renderizar();
+  cargarCalendario(mesCalendario || periodoActual());
 }
+
+/* ============================================================
+   CALENDARIO MENSUAL DE PAGOS
+   ============================================================ */
+async function cargarCalendario(periodo) {
+  if (!db) return;
+  mesCalendario = periodo;
+  calMesLabel.textContent = periodoLabel(periodo).toUpperCase();
+
+  if (inquilinosCache.length === 0) {
+    calLista.innerHTML = "<p class='sin-datos'>Añade inquilinos para verlos aquí.</p>";
+    return;
+  }
+
+  const { data, error } = await db
+    .from(TABLA_PAGOS)
+    .select("inquilino_id")
+    .eq("periodo", periodo);
+
+  if (error) {
+    console.error("Error al cargar el calendario:", error);
+    calLista.innerHTML = "<p class='sin-datos'>No se pudo cargar el calendario.</p>";
+    return;
+  }
+
+  const pagadosSet = new Set((data || []).map((p) => String(p.inquilino_id)));
+
+  calLista.innerHTML = inquilinosCache.map((inq) => {
+    const pagado = pagadosSet.has(String(inq.id));
+    return `
+      <button class="cal-item ${pagado ? "cal-pagado" : "cal-pendiente"}" data-id="${inq.id}" data-pagado="${pagado}">
+        <span class="cal-emoji">${pagado ? "✅" : "❌"}</span>
+        <span class="cal-nombre">${escapar(inq.nombre)}</span>
+        <span class="cal-importe">${eur(inq.importe)}</span>
+      </button>
+    `;
+  }).join("");
+}
+
+/* Marca/desmarca el pago de un inquilino para un mes concreto del calendario */
+async function toggleCalendario(inquilinoId, periodo, marcarPagado) {
+  if (!credencialesConfiguradas()) return;
+
+  // Si es el mes en curso, reutilizamos actualizarPago() para mantener
+  // sincronizado el estado "en vivo" del inquilino con el historial.
+  if (periodo === periodoActual()) {
+    await actualizarPago(inquilinoId, marcarPagado);
+    return;
+  }
+
+  const inq = inquilinosCache.find((i) => String(i.id) === String(inquilinoId));
+
+  if (marcarPagado) {
+    const { error } = await db.from(TABLA_PAGOS).upsert(
+      {
+        inquilino_id: inquilinoId,
+        periodo,
+        importe: inq ? inq.importe : 0,
+        fecha_pago: new Date().toISOString(),
+      },
+      { onConflict: "inquilino_id,periodo" }
+    );
+    if (error) {
+      console.error("Error al registrar el pago:", error);
+      mostrarMensaje("No se pudo registrar el pago: " + error.message);
+      return;
+    }
+  } else {
+    const { error } = await db
+      .from(TABLA_PAGOS)
+      .delete()
+      .eq("inquilino_id", inquilinoId)
+      .eq("periodo", periodo);
+    if (error) {
+      console.error("Error al desmarcar el pago:", error);
+      mostrarMensaje("No se pudo actualizar: " + error.message);
+      return;
+    }
+  }
+
+  cargarCalendario(periodo);
+}
+
+calLista.addEventListener("click", (e) => {
+  const boton = e.target.closest(".cal-item");
+  if (!boton) return;
+  toggleCalendario(boton.dataset.id, mesCalendario, boton.dataset.pagado !== "true");
+});
+
+calPrev.addEventListener("click", () => cargarCalendario(sumarMeses(mesCalendario || periodoActual(), -1)));
+calNext.addEventListener("click", () => cargarCalendario(sumarMeses(mesCalendario || periodoActual(), 1)));
 
 /* Aplica buscador + filtro y devuelve la lista visible */
 function listaVisible() {
@@ -285,7 +416,7 @@ function actualizarStats() {
 
 function botonEstado(inq) {
   const clase = inq.pagado ? "estado-pagado" : "estado-pendiente";
-  const texto = inq.pagado ? "Pagado" : "Pendiente";
+  const texto = inq.pagado ? "✅ Pagado" : "❌ Pendiente";
   return `<button class="estado-btn ${clase}" data-accion="toggle" data-id="${inq.id}" data-pagado="${inq.pagado}">${texto}</button>`;
 }
 
