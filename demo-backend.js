@@ -5,12 +5,22 @@
    navegador. Se usa automáticamente cuando NO has puesto tus
    credenciales, para que puedas probar la app tal cual.
 
+   Acceso en modo demo:
+     Usuario:    admin
+     Contraseña: Admin1234
+
    Los datos se guardan SOLO en tu navegador (no hay servidor).
    Al poner tus credenciales reales en script.js, este modo se
    desactiva solo.
    ============================================================ */
 (function () {
   const PREFIJO = "demo_";
+  const VERSION = "3"; // súbelo si cambias la estructura para reiniciar datos
+
+  /* Credenciales de acceso del modo demo */
+  const CRED_USUARIO = "admin";
+  const CRED_PASSWORD = "Admin1234";
+
   const uuid = () =>
     (crypto.randomUUID && crypto.randomUUID()) ||
     "id-" + Date.now() + "-" + Math.random().toString(16).slice(2);
@@ -24,16 +34,13 @@
     localStorage.setItem(PREFIJO + tabla, JSON.stringify(filas));
   }
 
-  /* Datos de ejemplo la primera vez */
-  function sembrar() {
-    if (localStorage.getItem(PREFIJO + "sembrado")) return;
-    escribir("inquilinos", [
-      { id: uuid(), user_id: "demo", nombre: "Ana García",  correo: "ana@correo.com",  telefono: "600 111 222", importe: 750, dia_cobro: 1,  pagado: true,  fecha_pago: new Date().toISOString(), creado_en: new Date().toISOString() },
-      { id: uuid(), user_id: "demo", nombre: "Luis Pérez",  correo: "luis@correo.com", telefono: "600 333 444", importe: 620, dia_cobro: 5,  pagado: false, fecha_pago: null, creado_en: new Date().toISOString() },
-      { id: uuid(), user_id: "demo", nombre: "Marta Ruiz",  correo: "marta@correo.com",telefono: "600 555 666", importe: 900, dia_cobro: 10, pagado: false, fecha_pago: null, creado_en: new Date().toISOString() },
-    ]);
-    escribir("pagos", []);
-    localStorage.setItem(PREFIJO + "sembrado", "1");
+  /* Inicializa las tablas VACÍAS la primera vez (o al subir VERSION) */
+  function inicializar() {
+    if (localStorage.getItem(PREFIJO + "v") !== VERSION) {
+      escribir("inquilinos", []);
+      escribir("pagos", []);
+      localStorage.setItem(PREFIJO + "v", VERSION);
+    }
   }
 
   /* Constructor de consultas encadenables y "esperables" (await) */
@@ -113,29 +120,57 @@
     }
   }
 
-  /* Sesión y auth simuladas: siempre "logueado" como usuario demo */
-  const sesionDemo = { user: { email: "demo@local (modo prueba)" } };
+  /* --------------------------------------------------------
+     Autenticación simulada con usuario/contraseña fijos
+     -------------------------------------------------------- */
+  const sesionDemo = { user: { email: CRED_USUARIO } };
+
+  function haySesion() {
+    return localStorage.getItem(PREFIJO + "sesion") === "1";
+  }
 
   const auth = {
     _cb: null,
-    async getSession() { return { data: { session: sesionDemo } }; },
+
+    async getSession() {
+      return { data: { session: haySesion() ? sesionDemo : null } };
+    },
+
     onAuthStateChange(cb) {
       this._cb = cb;
-      setTimeout(() => cb("SIGNED_IN", sesionDemo), 0);
+      setTimeout(() => {
+        cb(haySesion() ? "SIGNED_IN" : "SIGNED_OUT", haySesion() ? sesionDemo : null);
+      }, 0);
       return { data: { subscription: { unsubscribe() {} } } };
     },
-    async signInWithPassword() { return { data: { session: sesionDemo }, error: null }; },
-    async signUp() { return { data: { session: sesionDemo }, error: null }; },
+
+    async signInWithPassword({ email, password }) {
+      const usuario = (email || "").trim();
+      if (usuario.toLowerCase() === CRED_USUARIO && password === CRED_PASSWORD) {
+        localStorage.setItem(PREFIJO + "sesion", "1");
+        if (this._cb) this._cb("SIGNED_IN", sesionDemo);
+        return { data: { session: sesionDemo }, error: null };
+      }
+      return { data: { session: null }, error: { message: "Usuario o contraseña incorrectos." } };
+    },
+
+    async signUp() {
+      return {
+        data: { session: null },
+        error: { message: 'Modo demo: entra con el usuario "admin".' },
+      };
+    },
+
     async signOut() {
-      // En demo no cerramos sesión de verdad (no hay a dónde ir); recargamos.
-      if (this._cb) this._cb("SIGNED_IN", sesionDemo);
+      localStorage.removeItem(PREFIJO + "sesion");
+      if (this._cb) this._cb("SIGNED_OUT", null);
       return { error: null };
     },
   };
 
   /* Cliente demo expuesto para script.js */
   window.crearClienteDemo = function () {
-    sembrar();
+    inicializar();
     return {
       esDemo: true,
       auth,

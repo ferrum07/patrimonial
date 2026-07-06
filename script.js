@@ -739,6 +739,15 @@ btnExportar.addEventListener("click", () => {
    ============================================================ */
 (async function init() {
   if (!credencialesConfiguradas()) return;
+
+  // En modo demo, mostramos la pista de credenciales y ocultamos el registro
+  if (modoDemo) {
+    const hint = document.getElementById("auth-demo-hint");
+    if (hint) hint.hidden = false;
+    const toggle = document.querySelector(".auth-toggle");
+    if (toggle) toggle.hidden = true;
+  }
+
   const { data } = await db.auth.getSession();
   cargando.hidden = true;
   if (!data.session) {

@@ -23,8 +23,8 @@
 
       <form id="form-auth" class="auth-form" autocomplete="on">
         <div class="campo">
-          <label for="auth-email">Correo electrónico</label>
-          <input type="email" id="auth-email" placeholder="tucorreo@email.com" required />
+          <label for="auth-email" id="auth-email-label">Usuario o correo</label>
+          <input type="text" id="auth-email" placeholder="admin" required autocapitalize="none" />
         </div>
         <div class="campo">
           <label for="auth-pass">Contraseña</label>
@@ -37,6 +37,11 @@
       <p class="auth-toggle">
         <span id="auth-toggle-texto">¿No tienes cuenta?</span>
         <a href="#" id="auth-toggle-link">Regístrate</a>
+      </p>
+
+      <!-- Pista de credenciales (solo se muestra en modo demo) -->
+      <p id="auth-demo-hint" class="auth-hint" hidden>
+        🧪 Modo demo · Usuario: <strong>admin</strong> · Contraseña: <strong>Admin1234</strong>
       </p>
     </div>
   </main>
