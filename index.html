@@ -39,10 +39,39 @@
         <a href="#" id="auth-toggle-link">Regístrate</a>
       </p>
 
+      <p class="auth-toggle">
+        <a href="#" id="auth-olvide-link">¿Olvidaste tu contraseña?</a>
+      </p>
+
       <!-- Pista de credenciales (solo se muestra en modo demo) -->
       <p id="auth-demo-hint" class="auth-hint" hidden>
         🧪 Modo demo · Usuario: <strong>admin</strong> · Contraseña: <strong>Admin1234</strong>
       </p>
+    </div>
+  </main>
+
+  <!-- ============================================================
+       PANTALLA: Establecer nueva contraseña
+       (se muestra al volver desde el enlace de recuperación)
+       ============================================================ -->
+  <main id="pantalla-nueva-pass" class="auth-screen" hidden>
+    <div class="auth-card">
+      <div class="auth-logo">🔑</div>
+      <h1 class="auth-title">Nueva contraseña</h1>
+      <p class="auth-sub">Elige una contraseña nueva para tu cuenta</p>
+
+      <form id="form-nueva-pass" class="auth-form" autocomplete="off">
+        <div class="campo">
+          <label for="nueva-pass-1">Nueva contraseña</label>
+          <input type="password" id="nueva-pass-1" placeholder="Mínimo 6 caracteres" minlength="6" required />
+        </div>
+        <div class="campo">
+          <label for="nueva-pass-2">Repite la contraseña</label>
+          <input type="password" id="nueva-pass-2" placeholder="Repite la contraseña" minlength="6" required />
+        </div>
+
+        <button type="submit" id="btn-nueva-pass" class="btn btn-primary btn-block">Guardar contraseña</button>
+      </form>
     </div>
   </main>
 
@@ -76,6 +105,10 @@
         <span class="stat-num" id="stat-mensual">0 €</span>
         <span class="stat-label">Ingreso mensual total</span>
       </div>
+      <div class="stat-card stat-deuda">
+        <span class="stat-num" id="stat-deuda">0 €</span>
+        <span class="stat-label">⚡💧 Deuda de recibos</span>
+      </div>
     </section>
 
     <!-- Calendario mensual de pagos -->
@@ -95,29 +128,78 @@
     <!-- Formulario para añadir inquilino -->
     <section class="card">
       <h2 id="form-titulo">Añadir inquilino</h2>
-      <form id="form-inquilino" class="form-grid" autocomplete="off">
+      <form id="form-inquilino" autocomplete="off">
         <input type="hidden" id="edit-id" />
-        <div class="campo">
-          <label for="nombre">Nombre</label>
-          <input type="text" id="nombre" placeholder="Ej. Ana García" required />
+
+        <div class="form-grid">
+          <div class="campo">
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" placeholder="Ej. Ana García" required />
+          </div>
+          <div class="campo">
+            <label for="correo">Correo</label>
+            <input type="email" id="correo" placeholder="ana@correo.com" required />
+          </div>
+          <div class="campo">
+            <label for="telefono">Teléfono</label>
+            <input type="tel" id="telefono" placeholder="600 123 456" required />
+          </div>
+          <div class="campo">
+            <label for="importe">Importe (€/mes)</label>
+            <input type="number" id="importe" placeholder="750" min="0" step="0.01" required />
+          </div>
+          <div class="campo">
+            <label for="dia-cobro">Día de cobro</label>
+            <input type="number" id="dia-cobro" placeholder="1" min="1" max="31" required />
+          </div>
         </div>
-        <div class="campo">
-          <label for="correo">Correo</label>
-          <input type="email" id="correo" placeholder="ana@correo.com" required />
+
+        <h3 class="subform-titulo">🏠 Datos de la propiedad</h3>
+        <div class="form-grid form-grid-propiedad">
+          <div class="campo">
+            <label for="ref-catastral">Referencia catastral</label>
+            <input type="text" id="ref-catastral" placeholder="1234567AB1234C0001XY" />
+          </div>
+          <div class="campo">
+            <label for="valor-propiedad">Valor de la propiedad (€)</label>
+            <input type="number" id="valor-propiedad" placeholder="150000" min="0" step="0.01" />
+          </div>
+          <div class="campo">
+            <label for="banco">Banco</label>
+            <input type="text" id="banco" placeholder="Ej. CaixaBank" />
+          </div>
+          <div class="campo">
+            <label for="iban">IBAN</label>
+            <input type="text" id="iban" placeholder="ES00 0000 0000 0000 0000 0000" />
+          </div>
+          <div class="campo campo-foto">
+            <label for="foto-propiedad">Foto de la propiedad</label>
+            <input type="file" id="foto-propiedad" accept="image/*" />
+            <img id="foto-preview" class="foto-preview" alt="Vista previa de la propiedad" hidden />
+          </div>
         </div>
-        <div class="campo">
-          <label for="telefono">Teléfono</label>
-          <input type="tel" id="telefono" placeholder="600 123 456" required />
+
+        <h3 class="subform-titulo">🧾 Recibos de suministros</h3>
+        <div class="form-grid form-grid-recibos">
+          <div class="campo">
+            <label for="luz-importe">Recibo de luz (€)</label>
+            <input type="number" id="luz-importe" placeholder="0" min="0" step="0.01" />
+          </div>
+          <label class="check-pagado">
+            <input type="checkbox" id="luz-pagado" />
+            <span>💡 Luz pagada</span>
+          </label>
+          <div class="campo">
+            <label for="agua-importe">Recibo de agua (€)</label>
+            <input type="number" id="agua-importe" placeholder="0" min="0" step="0.01" />
+          </div>
+          <label class="check-pagado">
+            <input type="checkbox" id="agua-pagado" />
+            <span>💧 Agua pagada</span>
+          </label>
         </div>
-        <div class="campo">
-          <label for="importe">Importe (€/mes)</label>
-          <input type="number" id="importe" placeholder="750" min="0" step="0.01" required />
-        </div>
-        <div class="campo">
-          <label for="dia-cobro">Día de cobro</label>
-          <input type="number" id="dia-cobro" placeholder="1" min="1" max="31" required />
-        </div>
-        <div class="campo campo-boton">
+
+        <div class="campo-boton">
           <button type="submit" id="btn-anadir" class="btn btn-primary btn-block">＋ Añadir</button>
           <button type="button" id="btn-cancelar" class="btn btn-ghost btn-block" hidden>Cancelar</button>
         </div>

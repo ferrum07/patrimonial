@@ -1,0 +1,1 @@
+referencia catastral, foto de la propiedad, valor, nombre del banco y iban, recibos de luz y agua, deuda de recibos.

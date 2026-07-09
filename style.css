@@ -1,30 +1,39 @@
 /* ============================================================
-   ESTILO "APPLE / iOS"
-   Fondo gris agrupado, tarjetas blancas redondeadas, azul de
-   sistema, insignias de color suave ("tinted") y tipografía
-   San Francisco. Inspirado en Ajustes / Salud / Wallet de iOS.
+   ESTILO FUNCIONAL — claro, sólido y sin adornos
+   Fondo gris claro, tarjetas blancas con borde fino y sombra
+   discreta, azul de acento, tipografía del sistema. Sin
+   desenfoques, sin gradientes, sin animaciones decorativas.
    ============================================================ */
 :root {
-  --azul: #007AFF;
-  --azul-oscuro: #0060DF;
-  --verde: #34C759;
-  --verde-tinte: rgba(52, 199, 89, 0.15);
-  --verde-texto: #248A3D;
-  --rojo: #FF3B30;
-  --rojo-tinte: rgba(255, 59, 48, 0.12);
-  --rojo-texto: #D70015;
-  --naranja: #FF9500;
-  --morado: #AF52DE;
-  --fondo: #F2F2F7;      /* fondo general, gris agrupado de iOS */
-  --superficie: #FFFFFF; /* fondo de tarjetas */
-  --relleno: #EFEFF4;    /* relleno de inputs / filas */
-  --texto: #1C1C1E;
-  --gris: #8E8E93;       /* texto secundario */
-  --gris-claro: #E5E5EA; /* separadores */
-  --sombra: 0 1px 2px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.05);
-  --sombra-flotante: 0 12px 40px rgba(0,0,0,0.12);
-  --radio: 16px;
-  --radio-sm: 12px;
+  --azul: #2563EB;
+  --azul-oscuro: #1D4ED8;
+  --verde: #16A34A;
+  --verde-tinte: #DCFCE7;
+  --verde-texto: #15803D;
+  --rojo: #DC2626;
+  --rojo-tinte: #FEE2E2;
+  --rojo-texto: #B91C1C;
+  --naranja: #D97706;
+  --morado: #7C3AED;
+  --morado-tinte: #EDE4FB;
+
+  --fondo: #F3F4F6;
+  --superficie: #FFFFFF;
+  --relleno: #F3F4F6;
+  --relleno-hover: #E5E7EB;
+
+  --texto: #111827;
+  --texto-secundario: #6B7280;
+  --texto-terciario: #9CA3AF;
+
+  --borde: #E5E7EB;
+  --separador: #E5E7EB;
+
+  --sombra: 0 1px 2px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.05);
+
+  --radio: 12px;
+  --radio-sm: 8px;
+  --radio-xs: 6px;
 }
 
 * {
@@ -33,14 +42,12 @@
   padding: 0;
 }
 
-/* El atributo [hidden] debe ocultar SIEMPRE, aunque una clase
-   defina display:flex (como .modal o .cargando). */
 [hidden] {
   display: none !important;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   background: var(--fondo);
   color: var(--texto);
   line-height: 1.5;
@@ -57,9 +64,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--gris);
+  color: var(--texto-secundario);
   font-size: 1rem;
-  font-weight: 500;
   background: var(--fondo);
 }
 
@@ -75,30 +81,29 @@ body {
 
 .auth-card {
   background: var(--superficie);
-  border-radius: 24px;
-  box-shadow: var(--sombra-flotante);
-  padding: 40px 30px 34px;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra);
+  padding: 36px 30px;
   width: 100%;
   max-width: 400px;
   text-align: center;
 }
 
-/* "Icono de app" redondeado, como un icono real de iOS */
 .auth-logo {
-  width: 72px;
-  height: 72px;
+  width: 60px;
+  height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 18px;
-  font-size: 2.1rem;
-  background: linear-gradient(135deg, #0A84FF, #5AC8FA);
-  border-radius: 18px;
-  box-shadow: 0 10px 24px rgba(10, 132, 255, 0.35);
+  margin: 0 auto 16px;
+  font-size: 1.8rem;
+  background: var(--relleno);
+  border-radius: var(--radio-sm);
 }
 
-.auth-title { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; }
-.auth-sub { color: var(--gris); font-size: 0.9rem; margin: 6px 0 26px; }
+.auth-title { font-size: 1.4rem; font-weight: 700; }
+.auth-sub { color: var(--texto-secundario); font-size: 0.9rem; margin: 6px 0 24px; }
 
 .auth-form {
   text-align: left;
@@ -112,13 +117,14 @@ body {
   font-size: 0.8rem;
   color: var(--texto);
   background: var(--relleno);
+  border: 1px solid var(--borde);
   border-radius: var(--radio-sm);
   padding: 10px 14px;
 }
 .auth-hint strong { color: var(--azul); }
 
-.auth-toggle { margin-top: 20px; font-size: 0.88rem; color: var(--gris); }
-.auth-toggle a { color: var(--azul); font-weight: 600; text-decoration: none; margin-left: 4px; }
+.auth-toggle { margin-top: 16px; font-size: 0.86rem; color: var(--texto-secundario); }
+.auth-toggle a { color: var(--azul); font-weight: 600; text-decoration: none; }
 .auth-toggle a:hover { text-decoration: underline; }
 
 /* ============================================================
@@ -131,19 +137,21 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 22px;
-  padding: 4px 2px 18px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--borde);
 }
 
-.app-header h1 { font-size: 1.7rem; font-weight: 700; letter-spacing: -0.02em; }
-.subtitle { color: var(--gris); font-size: 0.85rem; margin-top: 2px; }
+.app-header h1 { font-size: 1.4rem; font-weight: 700; }
+.subtitle { color: var(--texto-secundario); font-size: 0.85rem; margin-top: 2px; }
 
 .card {
   background: var(--superficie);
+  border: 1px solid var(--borde);
   border-radius: var(--radio);
   box-shadow: var(--sombra);
   padding: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
 .card h2 {
@@ -151,13 +159,13 @@ body {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.03em;
-  color: var(--gris);
+  color: var(--texto-secundario);
   margin-bottom: 14px;
 }
 
 .app-footer {
   text-align: center;
-  color: var(--gris);
+  color: var(--texto-terciario);
   font-size: 0.78rem;
   padding: 8px 0 4px;
 }
@@ -167,13 +175,14 @@ body {
    ============================================================ */
 .stats {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 12px;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
 .stat-card {
   background: var(--superficie);
+  border: 1px solid var(--borde);
   border-radius: var(--radio);
   box-shadow: var(--sombra);
   padding: 16px;
@@ -182,12 +191,13 @@ body {
   gap: 3px;
 }
 
-.stat-num { font-size: 1.55rem; font-weight: 700; line-height: 1.15; letter-spacing: -0.01em; }
-.stat-label { font-size: 0.76rem; color: var(--gris); font-weight: 600; }
+.stat-num { font-size: 1.5rem; font-weight: 700; line-height: 1.15; }
+.stat-label { font-size: 0.76rem; color: var(--texto-secundario); font-weight: 600; }
 
-.stat-ok .stat-num   { color: var(--verde-texto); }
-.stat-pend .stat-num { color: var(--rojo-texto); }
-.stat-mes .stat-num  { color: var(--naranja); }
+.stat-ok .stat-num    { color: var(--verde-texto); }
+.stat-pend .stat-num  { color: var(--rojo-texto); }
+.stat-mes .stat-num   { color: var(--naranja); }
+.stat-deuda .stat-num { color: var(--morado); }
 
 /* ============================================================
    Calendario mensual de pagos
@@ -201,24 +211,19 @@ body {
   margin-bottom: 14px;
 }
 
-.cal-nav {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+.cal-nav { display: flex; align-items: center; gap: 8px; }
 
 .btn-cal-nav {
   background: var(--relleno);
   color: var(--azul);
-  border: none;
+  border: 1px solid var(--borde);
   border-radius: 50%;
   width: 32px;
   height: 32px;
   font-size: 0.85rem;
   cursor: pointer;
 }
-.btn-cal-nav:hover { background: var(--gris-claro); }
-.btn-cal-nav:active { opacity: 0.6; }
+.btn-cal-nav:hover { background: var(--relleno-hover); }
 
 .cal-mes {
   font-weight: 600;
@@ -238,29 +243,25 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  border: none;
+  border: 1px solid var(--borde);
   border-radius: var(--radio-sm);
   background: var(--relleno);
   padding: 12px 14px;
   cursor: pointer;
   text-align: left;
   font-family: inherit;
-  transition: transform 0.08s, opacity 0.08s;
+  color: var(--texto);
 }
-.cal-item:active { transform: scale(0.98); opacity: 0.85; }
+.cal-item:hover { background: var(--relleno-hover); }
 
-.cal-pagado { background: var(--verde-tinte); }
-.cal-pendiente { background: var(--rojo-tinte); }
+.cal-pagado { background: var(--verde-tinte); border-color: #BBF7D0; }
+.cal-pendiente { background: var(--rojo-tinte); border-color: #FECACA; }
 
 .cal-emoji { font-size: 1.2rem; line-height: 1; }
 .cal-nombre { flex: 1; font-weight: 600; font-size: 0.9rem; }
-.cal-importe { font-size: 0.82rem; color: var(--gris); font-weight: 600; }
+.cal-importe { font-size: 0.82rem; color: var(--texto-secundario); font-weight: 600; }
 
-.cal-ayuda {
-  margin-top: 14px;
-  font-size: 0.78rem;
-  color: var(--gris);
-}
+.cal-ayuda { margin-top: 14px; font-size: 0.78rem; color: var(--texto-secundario); }
 
 /* ============================================================
    Formulario
@@ -278,84 +279,154 @@ body {
   font-size: 0.78rem;
   font-weight: 600;
   margin-bottom: 6px;
-  color: var(--gris);
+  color: var(--texto-secundario);
 }
 
 .campo input {
-  padding: 11px 12px;
-  border: none;
+  padding: 10px 12px;
+  border: 1px solid var(--borde);
   border-radius: var(--radio-sm);
-  background: var(--relleno);
+  background: var(--superficie);
   color: var(--texto);
   font-size: 1rem; /* 16px evita el zoom automático en iOS */
-  transition: box-shadow 0.15s;
   width: 100%;
 }
 
-.campo input::placeholder { color: var(--gris); }
-
 .campo input:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3);
+  border-color: var(--azul);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
-.campo-boton { display: flex; flex-direction: column; gap: 8px; }
+.campo-boton { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+
+/* Subtítulos de sección dentro del formulario (propiedad / recibos) */
+.subform-titulo {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--texto-secundario);
+  margin: 20px 0 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--separador);
+}
+
+.form-grid-propiedad,
+.form-grid-recibos {
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+}
+
+.campo-foto { grid-column: 1 / -1; }
+
+.foto-preview {
+  margin-top: 10px;
+  width: 100%;
+  max-width: 260px;
+  max-height: 160px;
+  object-fit: cover;
+  border-radius: var(--radio-sm);
+  border: 1px solid var(--borde);
+}
+
+.check-pagado {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  align-self: end;
+  padding: 11px 14px;
+  background: var(--relleno);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-sm);
+  color: var(--texto);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.check-pagado input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--verde);
+  cursor: pointer;
+}
 
 /* ============================================================
    Botones
    ============================================================ */
 .btn {
+  appearance: none;
+  -webkit-appearance: none;
   cursor: pointer;
-  border: none;
+  border: 1px solid var(--borde);
   border-radius: var(--radio-sm);
-  font-size: 0.88rem;
+  font-family: inherit;
+  font-size: 0.87rem;
   font-weight: 600;
-  padding: 11px 18px;
-  transition: opacity 0.1s, transform 0.05s;
+  padding: 10px 16px;
+  transition: background 0.1s;
   white-space: nowrap;
   background: var(--relleno);
-  color: var(--azul);
+  color: var(--texto);
 }
 
-.btn:active { opacity: 0.6; transform: scale(0.98); }
-.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn:hover { background: var(--relleno-hover); }
+.btn:active { opacity: 0.85; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn-block { width: 100%; }
 
 .btn-primary {
   background: var(--azul);
   color: #fff;
+  border-color: var(--azul);
 }
-.btn-primary:hover:not(:disabled) { background: var(--azul-oscuro); }
+.btn-primary:hover:not(:disabled) { background: var(--azul-oscuro); border-color: var(--azul-oscuro); }
 
 .btn-ghost {
-  background: var(--relleno);
+  background: var(--superficie);
   color: var(--texto);
+  border: 1px solid var(--borde);
 }
-.btn-ghost:hover { background: var(--gris-claro); }
+.btn-ghost:hover { background: var(--relleno); }
 
 .btn-editar {
-  background: rgba(0, 122, 255, 0.12);
+  background: #DBEAFE;
+  border-color: #BFDBFE;
   color: var(--azul);
-  padding: 8px 12px;
+  padding: 7px 12px;
 }
+.btn-editar:hover { background: #BFDBFE; }
 
 .btn-recibo {
-  background: rgba(175, 82, 222, 0.12);
+  background: var(--morado-tinte);
+  border-color: #DDD6FE;
   color: var(--morado);
-  padding: 8px 12px;
+  padding: 7px 12px;
 }
+.btn-recibo:hover { background: #DDD6FE; }
+
+.btn-propiedad {
+  background: #FEF3C7;
+  border-color: #FDE68A;
+  color: var(--naranja);
+  padding: 7px 12px;
+}
+.btn-propiedad:hover { background: #FDE68A; }
 
 .btn-historial {
   background: var(--relleno);
+  border-color: var(--borde);
   color: var(--texto);
-  padding: 8px 12px;
+  padding: 7px 12px;
 }
+.btn-historial:hover { background: var(--relleno-hover); }
 
 .btn-eliminar {
   background: var(--rojo-tinte);
+  border-color: #FECACA;
   color: var(--rojo-texto);
-  padding: 8px 12px;
+  padding: 7px 12px;
 }
+.btn-eliminar:hover { background: #FECACA; }
 
 /* ============================================================
    Cabecera de la tabla + buscador + filtros
@@ -372,26 +443,26 @@ body {
 .tabla-controles { display: flex; gap: 8px; align-items: center; flex: 1; justify-content: flex-end; }
 
 .buscador {
-  padding: 9px 14px;
-  border: none;
+  padding: 9px 12px;
+  border: 1px solid var(--borde);
   border-radius: var(--radio-sm);
-  background: var(--relleno);
+  background: var(--superficie);
   color: var(--texto);
   font-size: 0.95rem;
   min-width: 180px;
 }
-.buscador::placeholder { color: var(--gris); }
 .buscador:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3);
+  border-color: var(--azul);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
 }
 
-/* Filtros con aspecto de "control segmentado" de iOS */
 .filtros {
   display: flex;
-  gap: 2px;
+  gap: 4px;
   margin-bottom: 16px;
   background: var(--relleno);
+  border: 1px solid var(--borde);
   border-radius: var(--radio-sm);
   padding: 3px;
 }
@@ -401,14 +472,14 @@ body {
   cursor: pointer;
   border: none;
   background: transparent;
-  color: var(--gris);
-  border-radius: 9px;
+  color: var(--texto-secundario);
+  border-radius: var(--radio-xs);
   font-size: 0.82rem;
   font-weight: 600;
   padding: 7px 12px;
-  transition: all 0.15s;
 }
-.chip-activo { background: var(--superficie); color: var(--texto); box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+.chip:hover { color: var(--texto); }
+.chip-activo { background: var(--superficie); color: var(--texto); box-shadow: var(--sombra); }
 
 /* ============================================================
    Tabla (escritorio)
@@ -420,7 +491,7 @@ body {
 .tabla td {
   padding: 12px 14px;
   text-align: left;
-  border-bottom: 1px solid var(--gris-claro);
+  border-bottom: 1px solid var(--separador);
   font-size: 0.9rem;
 }
 
@@ -428,7 +499,7 @@ body {
   font-size: 0.72rem;
   text-transform: uppercase;
   letter-spacing: 0.03em;
-  color: var(--gris);
+  color: var(--texto-secundario);
   font-weight: 700;
 }
 
@@ -439,13 +510,27 @@ body {
 td.col-center { text-align: center; }
 td.col-right  { text-align: right; }
 
-.contacto-sec { color: var(--gris); font-size: 0.82rem; }
+.contacto-sec { color: var(--texto-secundario); font-size: 0.82rem; }
 .importe-val { font-weight: 700; }
-.fecha-pago { display: block; color: var(--gris); font-size: 0.7rem; margin-top: 3px; }
+.fecha-pago { display: block; color: var(--texto-terciario); font-size: 0.7rem; margin-top: 3px; }
 .acciones-cell { display: flex; gap: 6px; justify-content: center; }
 
+/* Insignia de deuda de recibos pendientes */
+.deuda-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--morado-tinte);
+  color: var(--morado);
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.inq-card-dato.deuda-badge { margin-left: 0; display: flex; }
+
 /* ============================================================
-   Insignia de estado de pago (estilo "tinted badge" de iOS)
+   Insignia de estado de pago
    ============================================================ */
 .estado-btn {
   cursor: pointer;
@@ -457,9 +542,8 @@ td.col-right  { text-align: right; }
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  transition: opacity 0.1s;
 }
-.estado-btn:active { opacity: 0.6; }
+.estado-btn:hover { opacity: 0.85; }
 
 .estado-pagado { background: var(--verde-tinte); color: var(--verde-texto); }
 .estado-pendiente { background: var(--rojo-tinte); color: var(--rojo-texto); }
@@ -470,7 +554,7 @@ td.col-right  { text-align: right; }
 .lista-cards { display: none; }
 
 .inq-card {
-  border: none;
+  border: 1px solid var(--borde);
   background: var(--superficie);
   box-shadow: var(--sombra);
   border-radius: var(--radio);
@@ -490,16 +574,12 @@ td.col-right  { text-align: right; }
 
 .inq-card-nombre { font-weight: 700; font-size: 1.05rem; }
 
-.inq-card-importe {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--azul);
-}
-.inq-card-importe small { font-size: 0.7rem; color: var(--gris); font-weight: 600; }
+.inq-card-importe { font-size: 1.1rem; font-weight: 700; color: var(--azul); }
+.inq-card-importe small { font-size: 0.7rem; color: var(--texto-secundario); font-weight: 600; }
 
 .inq-card-dato {
   font-size: 0.86rem;
-  color: var(--gris);
+  color: var(--texto-secundario);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -513,10 +593,10 @@ td.col-right  { text-align: right; }
 /* ============================================================
    Varios
    ============================================================ */
-.sin-datos { text-align: center; color: var(--gris); padding: 32px 0; }
+.sin-datos { text-align: center; color: var(--texto-secundario); padding: 32px 0; }
 
 /* ============================================================
-   Modal (historial de pagos) — estilo "hoja" de iOS
+   Modal (historial de pagos / ficha de propiedad)
    ============================================================ */
 .modal {
   position: fixed;
@@ -531,14 +611,15 @@ td.col-right  { text-align: right; }
 .modal-fondo {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(0, 0, 0, 0.4);
 }
 
 .modal-card {
   position: relative;
   background: var(--superficie);
-  border-radius: 20px;
-  box-shadow: var(--sombra-flotante);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   width: 100%;
   max-width: 440px;
   max-height: 85vh;
@@ -552,7 +633,7 @@ td.col-right  { text-align: right; }
   align-items: center;
   justify-content: space-between;
   padding: 18px 20px;
-  border-bottom: 1px solid var(--gris-claro);
+  border-bottom: 1px solid var(--separador);
 }
 
 .modal-head h3 { font-size: 1.02rem; font-weight: 700; }
@@ -562,15 +643,18 @@ td.col-right  { text-align: right; }
   height: 30px;
   border-radius: 50%;
   background: var(--relleno);
-  color: var(--gris);
+  border: 1px solid var(--borde);
+  color: var(--texto-secundario);
   padding: 0;
   font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
+#modal-cerrar:hover { background: var(--relleno-hover); }
 
-.modal-body {
-  padding: 12px 20px 20px;
-  overflow-y: auto;
-}
+.modal-body { padding: 12px 20px 20px; overflow-y: auto; }
 
 .pago-item {
   display: flex;
@@ -578,16 +662,75 @@ td.col-right  { text-align: right; }
   justify-content: space-between;
   gap: 10px;
   padding: 12px 0;
-  border-bottom: 1px solid var(--gris-claro);
+  border-bottom: 1px solid var(--separador);
 }
 .pago-item:last-child { border-bottom: none; }
 
 .pago-periodo { font-weight: 700; text-transform: capitalize; }
-.pago-detalle { font-size: 0.8rem; color: var(--gris); }
+.pago-detalle { font-size: 0.8rem; color: var(--texto-secundario); }
 .pago-importe { font-weight: 700; color: var(--azul); }
 
 /* ============================================================
-   Mensajes flotantes (banner tipo notificación de iOS)
+   Ficha de la propiedad (dentro del modal)
+   ============================================================ */
+.propiedad-foto {
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: var(--radio-sm);
+  border: 1px solid var(--borde);
+  margin-bottom: 16px;
+}
+
+.propiedad-datos { display: flex; flex-direction: column; margin-bottom: 16px; }
+
+.propiedad-fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--separador);
+  font-size: 0.88rem;
+}
+.propiedad-fila:last-child { border-bottom: none; }
+.propiedad-fila span { color: var(--texto-secundario); }
+.propiedad-fila strong { color: var(--texto); text-align: right; word-break: break-word; }
+
+.propiedad-recibos { display: flex; flex-direction: column; gap: 8px; }
+
+.recibo-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  border: 1px solid transparent;
+  border-radius: var(--radio-sm);
+  padding: 12px 14px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.recibo-toggle:hover { opacity: 0.9; }
+
+.recibo-pagado { background: var(--verde-tinte); border-color: #BBF7D0; color: var(--verde-texto); }
+.recibo-pendiente { background: var(--rojo-tinte); border-color: #FECACA; color: var(--rojo-texto); }
+
+.propiedad-deuda {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: var(--radio-sm);
+  background: var(--morado-tinte);
+  border: 1px solid #DDD6FE;
+  color: var(--texto);
+  font-size: 0.88rem;
+  text-align: center;
+}
+.propiedad-deuda strong { color: var(--morado); }
+
+/* ============================================================
+   Mensajes flotantes
    ============================================================ */
 .mensaje {
   position: fixed;
@@ -599,12 +742,12 @@ td.col-right  { text-align: right; }
   border-radius: var(--radio-sm);
   font-size: 0.88rem;
   font-weight: 600;
-  box-shadow: var(--sombra-flotante);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
   max-width: 90%;
 }
 
-.mensaje-error { background: var(--rojo-tinte); color: var(--rojo-texto); }
-.mensaje-ok { background: var(--verde-tinte); color: var(--verde-texto); }
+.mensaje-error { background: var(--rojo-tinte); color: var(--rojo-texto); border: 1px solid #FECACA; }
+.mensaje-ok { background: var(--verde-tinte); color: var(--verde-texto); border: 1px solid #BBF7D0; }
 
 /* ============================================================
    Responsivo — móvil / iPhone
@@ -615,13 +758,12 @@ td.col-right  { text-align: right; }
 
 @media (max-width: 760px) {
   .form-grid { grid-template-columns: 1fr; }
-  .app-header h1 { font-size: 1.35rem; }
+  .app-header h1 { font-size: 1.2rem; }
 
   .stat-card { padding: 14px; }
   .stat-num { font-size: 1.3rem; }
   .stat-label { font-size: 0.68rem; }
 
-  /* Cambiamos tabla por tarjetas */
   .tabla-wrapper { display: none; }
   .lista-cards { display: block; }
 

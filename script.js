@@ -40,6 +40,13 @@ const authPass       = document.getElementById("auth-pass");
 const btnAuth        = document.getElementById("btn-auth");
 const authToggleLink = document.getElementById("auth-toggle-link");
 const authToggleTexto= document.getElementById("auth-toggle-texto");
+const authOlvideLink = document.getElementById("auth-olvide-link");
+
+const pantallaNuevaPass = document.getElementById("pantalla-nueva-pass");
+const formNuevaPass     = document.getElementById("form-nueva-pass");
+const nuevaPass1        = document.getElementById("nueva-pass-1");
+const nuevaPass2        = document.getElementById("nueva-pass-2");
+const btnNuevaPass      = document.getElementById("btn-nueva-pass");
 
 const usuarioEmail   = document.getElementById("usuario-email");
 const btnLogout      = document.getElementById("btn-logout");
@@ -70,12 +77,19 @@ const statTotal      = document.getElementById("stat-total");
 const statCobrado    = document.getElementById("stat-cobrado");
 const statPendiente  = document.getElementById("stat-pendiente");
 const statMensual    = document.getElementById("stat-mensual");
+const statDeuda      = document.getElementById("stat-deuda");
+
+const inputFoto       = document.getElementById("foto-propiedad");
+const fotoPreview      = document.getElementById("foto-preview");
 
 /* Estado en memoria */
 let inquilinosCache = [];
 let modoRegistro = false;   // false = login, true = registro
 let filtroActivo = "todos"; // todos | pagado | pendiente
 let usuarioActual = null;   // email del usuario autenticado (para los recibos)
+let fotoUrlEdicion = null;  // foto_url ya guardada del inquilino que se está editando
+
+const BUCKET_FOTOS = "propiedades";
 
 const TABLA_PAGOS = "pagos";
 const MESES = ["enero","febrero","marzo","abril","mayo","junio",
@@ -134,6 +148,13 @@ function eur(n) {
 function fecha(iso) {
   if (!iso) return "";
   return new Date(iso).toLocaleDateString("es-ES");
+}
+
+/* Deuda de recibos de un inquilino: suma de luz/agua marcados como NO pagados */
+function deudaRecibos(inq) {
+  const deudaLuz = inq.luz_pagado ? 0 : (Number(inq.luz_importe) || 0);
+  const deudaAgua = inq.agua_pagado ? 0 : (Number(inq.agua_importe) || 0);
+  return deudaLuz + deudaAgua;
 }
 
 function credencialesConfiguradas() {
@@ -204,10 +225,73 @@ btnLogout.addEventListener("click", async () => {
   await db.auth.signOut();
 });
 
+/* "¿Olvidaste tu contraseña?" — envía el correo de recuperación */
+authOlvideLink.addEventListener("click", async (e) => {
+  e.preventDefault();
+  if (!credencialesConfiguradas()) return;
+
+  const email = authEmail.value.trim();
+  if (!email || !email.includes("@")) {
+    mostrarMensaje("Escribe primero tu correo en el campo de arriba y vuelve a pulsar el enlace.");
+    return;
+  }
+
+  const { error } = await db.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + window.location.pathname,
+  });
+
+  if (error) {
+    console.error("Error al enviar la recuperación:", error);
+    mostrarMensaje(error.message);
+    return;
+  }
+  mostrarMensaje("Te hemos enviado un correo con un enlace para elegir una nueva contraseña.", "ok");
+});
+
+/* Guardar la nueva contraseña tras volver del enlace de recuperación */
+formNuevaPass.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (!credencialesConfiguradas()) return;
+
+  if (nuevaPass1.value !== nuevaPass2.value) {
+    mostrarMensaje("Las dos contraseñas no coinciden.");
+    return;
+  }
+
+  btnNuevaPass.disabled = true;
+  btnNuevaPass.textContent = "Guardando…";
+
+  const { error } = await db.auth.updateUser({ password: nuevaPass1.value });
+
+  btnNuevaPass.disabled = false;
+  btnNuevaPass.textContent = "Guardar contraseña";
+
+  if (error) {
+    console.error("Error al actualizar la contraseña:", error);
+    mostrarMensaje(error.message);
+    return;
+  }
+
+  formNuevaPass.reset();
+  mostrarMensaje("Contraseña actualizada. Inicia sesión con ella.", "ok");
+  await db.auth.signOut();
+});
+
 if (db) db.auth.onAuthStateChange((_evento, session) => {
   cargando.hidden = true;
+
+  // El usuario ha vuelto desde el enlace de "recuperar contraseña":
+  // le pedimos que elija una nueva en vez de meterlo directo en la app.
+  if (_evento === "PASSWORD_RECOVERY") {
+    pantallaAuth.hidden = true;
+    pantallaApp.hidden = true;
+    pantallaNuevaPass.hidden = false;
+    return;
+  }
+
   if (session && session.user) {
     usuarioActual = session.user.email;
+    pantallaNuevaPass.hidden = true;
     pantallaAuth.hidden = true;
     pantallaApp.hidden = false;
     usuarioEmail.textContent = session.user.email;
@@ -218,6 +302,7 @@ if (db) db.auth.onAuthStateChange((_evento, session) => {
   } else {
     usuarioActual = null;
     pantallaApp.hidden = true;
+    pantallaNuevaPass.hidden = true;
     pantallaAuth.hidden = false;
   }
 });
@@ -375,19 +460,21 @@ function renderizar() {
 /* Estadísticas en euros (sobre TODA la cartera, no solo lo filtrado) */
 function actualizarStats() {
   const total = inquilinosCache.length;
-  let cobrado = 0, pendiente = 0, mensual = 0;
+  let cobrado = 0, pendiente = 0, mensual = 0, deuda = 0;
 
   inquilinosCache.forEach((i) => {
     const importe = Number(i.importe) || 0;
     mensual += importe;
     if (i.pagado) cobrado += importe;
     else pendiente += importe;
+    deuda += deudaRecibos(i);
   });
 
   statTotal.textContent = total;
   statCobrado.textContent = eur(cobrado);
   statPendiente.textContent = eur(pendiente);
   statMensual.textContent = eur(mensual);
+  statDeuda.textContent = eur(deuda);
 }
 
 function botonEstado(inq) {
@@ -401,9 +488,12 @@ function crearFila(inq) {
   const tr = document.createElement("tr");
   const infoPago = inq.pagado && inq.fecha_pago
     ? `<span class="fecha-pago">Pagó el ${fecha(inq.fecha_pago)}</span>` : "";
+  const deuda = deudaRecibos(inq);
+  const deudaHtml = deuda > 0
+    ? `<span class="deuda-badge">⚡💧 ${eur(deuda)}</span>` : "";
 
   tr.innerHTML = `
-    <td>${escapar(inq.nombre)}</td>
+    <td>${escapar(inq.nombre)}${deudaHtml}</td>
     <td>
       ${escapar(inq.correo)}
       <span class="contacto-sec">· ${escapar(inq.telefono)}</span>
@@ -414,6 +504,7 @@ function crearFila(inq) {
     <td class="col-center">
       <div class="acciones-cell">
         <button class="btn btn-editar" data-accion="editar" data-id="${inq.id}" title="Editar">✎</button>
+        <button class="btn btn-propiedad" data-accion="propiedad" data-id="${inq.id}" title="Propiedad">🏠</button>
         <button class="btn btn-recibo" data-accion="recibo" data-id="${inq.id}" title="Recibo PDF">🧾</button>
         <button class="btn btn-historial" data-accion="historial" data-id="${inq.id}" title="Historial">📜</button>
         <button class="btn btn-eliminar" data-accion="eliminar" data-id="${inq.id}" title="Eliminar">🗑</button>
@@ -429,6 +520,9 @@ function crearCard(inq) {
   div.className = "inq-card";
   const infoPago = inq.pagado && inq.fecha_pago
     ? `<span class="inq-card-dato">✅ Pagado el ${fecha(inq.fecha_pago)}</span>` : "";
+  const deuda = deudaRecibos(inq);
+  const deudaHtml = deuda > 0
+    ? `<span class="inq-card-dato deuda-badge">⚡💧 Debe ${eur(deuda)} de recibos</span>` : "";
 
   div.innerHTML = `
     <div class="inq-card-top">
@@ -441,12 +535,16 @@ function crearCard(inq) {
     <span class="inq-card-dato">✉️ ${escapar(inq.correo)}</span>
     <span class="inq-card-dato">📞 ${escapar(inq.telefono)}</span>
     ${infoPago}
+    ${deudaHtml}
     <div class="inq-card-acciones">
       <button class="btn btn-editar" data-accion="editar" data-id="${inq.id}">✎ Editar</button>
-      <button class="btn btn-recibo" data-accion="recibo" data-id="${inq.id}">🧾 Recibo</button>
+      <button class="btn btn-propiedad" data-accion="propiedad" data-id="${inq.id}">🏠 Propiedad</button>
     </div>
     <div class="inq-card-acciones">
+      <button class="btn btn-recibo" data-accion="recibo" data-id="${inq.id}">🧾 Recibo</button>
       <button class="btn btn-historial" data-accion="historial" data-id="${inq.id}">📜 Historial</button>
+    </div>
+    <div class="inq-card-acciones">
       <button class="btn btn-eliminar" data-accion="eliminar" data-id="${inq.id}">🗑 Eliminar</button>
     </div>
   `;
@@ -469,6 +567,31 @@ document.querySelector(".filtros").addEventListener("click", (e) => {
 /* ============================================================
    CREATE / UPDATE — Guardar (alta o edición) desde el formulario
    ============================================================ */
+/* Sube la foto de la propiedad al almacenamiento y devuelve su URL pública */
+async function subirFotoPropiedad(archivo) {
+  const { data: sesionData } = await db.auth.getSession();
+  const carpeta = (sesionData && sesionData.session && sesionData.session.user)
+    ? sesionData.session.user.id : "anon";
+  const ruta = `${carpeta}/${Date.now()}-${archivo.name}`.replace(/\s+/g, "_");
+
+  const { error } = await db.storage.from(BUCKET_FOTOS).upload(ruta, archivo, { upsert: true });
+  if (error) {
+    console.error("Error al subir la foto:", error);
+    mostrarMensaje("No se pudo subir la foto: " + error.message);
+    return null;
+  }
+  const { data } = db.storage.from(BUCKET_FOTOS).getPublicUrl(ruta);
+  return data.publicUrl;
+}
+
+/* Vista previa de la foto al elegir un archivo */
+inputFoto.addEventListener("change", () => {
+  const archivo = inputFoto.files[0];
+  if (!archivo) return;
+  fotoPreview.src = URL.createObjectURL(archivo);
+  fotoPreview.hidden = false;
+});
+
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   if (!credencialesConfiguradas()) return;
@@ -479,6 +602,14 @@ form.addEventListener("submit", async (e) => {
     telefono: document.getElementById("telefono").value.trim(),
     importe: parseFloat(document.getElementById("importe").value) || 0,
     dia_cobro: parseInt(document.getElementById("dia-cobro").value, 10) || 1,
+    ref_catastral: document.getElementById("ref-catastral").value.trim() || null,
+    valor: parseFloat(document.getElementById("valor-propiedad").value) || null,
+    banco: document.getElementById("banco").value.trim() || null,
+    iban: document.getElementById("iban").value.trim().toUpperCase() || null,
+    luz_importe: parseFloat(document.getElementById("luz-importe").value) || 0,
+    luz_pagado: document.getElementById("luz-pagado").checked,
+    agua_importe: parseFloat(document.getElementById("agua-importe").value) || 0,
+    agua_pagado: document.getElementById("agua-pagado").checked,
   };
 
   if (!datos.nombre || !datos.correo || !datos.telefono) {
@@ -488,6 +619,23 @@ form.addEventListener("submit", async (e) => {
 
   btnAnadir.disabled = true;
   const textoOriginal = btnAnadir.textContent;
+  btnAnadir.textContent = "Guardando…";
+
+  // Si se eligió un archivo nuevo, se sube; si no, se conserva la foto anterior (edición)
+  const archivoFoto = inputFoto.files[0];
+  if (archivoFoto) {
+    btnAnadir.textContent = "Subiendo foto…";
+    const url = await subirFotoPropiedad(archivoFoto);
+    if (url === null) {
+      btnAnadir.disabled = false;
+      btnAnadir.textContent = textoOriginal;
+      return;
+    }
+    datos.foto_url = url;
+  } else if (editId.value) {
+    datos.foto_url = fotoUrlEdicion;
+  }
+
   btnAnadir.textContent = "Guardando…";
 
   let error;
@@ -522,6 +670,23 @@ function entrarModoEdicion(inq) {
   document.getElementById("telefono").value = inq.telefono;
   document.getElementById("importe").value = inq.importe;
   document.getElementById("dia-cobro").value = inq.dia_cobro;
+  document.getElementById("ref-catastral").value = inq.ref_catastral || "";
+  document.getElementById("valor-propiedad").value = inq.valor || "";
+  document.getElementById("banco").value = inq.banco || "";
+  document.getElementById("iban").value = inq.iban || "";
+  document.getElementById("luz-importe").value = inq.luz_importe || "";
+  document.getElementById("luz-pagado").checked = !!inq.luz_pagado;
+  document.getElementById("agua-importe").value = inq.agua_importe || "";
+  document.getElementById("agua-pagado").checked = !!inq.agua_pagado;
+
+  fotoUrlEdicion = inq.foto_url || null;
+  if (inq.foto_url) {
+    fotoPreview.src = inq.foto_url;
+    fotoPreview.hidden = false;
+  } else {
+    fotoPreview.hidden = true;
+    fotoPreview.src = "";
+  }
 
   formTitulo.textContent = "Editar inquilino";
   btnAnadir.textContent = "Guardar cambios";
@@ -532,6 +697,9 @@ function entrarModoEdicion(inq) {
 function salirModoEdicion() {
   editId.value = "";
   form.reset();
+  fotoUrlEdicion = null;
+  fotoPreview.hidden = true;
+  fotoPreview.src = "";
   formTitulo.textContent = "Añadir inquilino";
   btnAnadir.textContent = "＋ Añadir";
   btnCancelar.hidden = true;
@@ -560,6 +728,8 @@ function manejarClick(e) {
     reciboMesActual(id);
   } else if (accion === "historial") {
     verHistorial(id);
+  } else if (accion === "propiedad") {
+    verPropiedad(id);
   }
 }
 tablaBody.addEventListener("click", manejarClick);
@@ -682,15 +852,74 @@ async function verHistorial(id) {
 }
 
 modalBody.addEventListener("click", (e) => {
-  const btn = e.target.closest("[data-recibo-periodo]");
-  if (!btn) return;
-  generarRecibo({
-    nombre: btn.dataset.reciboNombre,
-    importe: btn.dataset.reciboImporte,
-    periodo: btn.dataset.reciboPeriodo,
-    fecha_pago: btn.dataset.reciboFecha,
-  });
+  const btnRecibo = e.target.closest("[data-recibo-periodo]");
+  if (btnRecibo) {
+    generarRecibo({
+      nombre: btnRecibo.dataset.reciboNombre,
+      importe: btnRecibo.dataset.reciboImporte,
+      periodo: btnRecibo.dataset.reciboPeriodo,
+      fecha_pago: btnRecibo.dataset.reciboFecha,
+    });
+    return;
+  }
+
+  const btnSuministro = e.target.closest("[data-suministro]");
+  if (btnSuministro) {
+    toggleSuministro(btnSuministro.dataset.id, btnSuministro.dataset.suministro);
+  }
 });
+
+/* ============================================================
+   FICHA DE LA PROPIEDAD (modal)
+   ============================================================ */
+function verPropiedad(id) {
+  const inq = inquilinosCache.find((i) => String(i.id) === String(id));
+  if (!inq) return;
+
+  const deuda = deudaRecibos(inq);
+
+  modalTitulo.textContent = "🏠 Propiedad · " + inq.nombre;
+  modalBody.innerHTML = `
+    ${inq.foto_url ? `<img src="${escapar(inq.foto_url)}" class="propiedad-foto" alt="Foto de la propiedad">` : ""}
+    <div class="propiedad-datos">
+      <div class="propiedad-fila"><span>Referencia catastral</span><strong>${escapar(inq.ref_catastral) || "—"}</strong></div>
+      <div class="propiedad-fila"><span>Valor de la propiedad</span><strong>${inq.valor ? eur(inq.valor) : "—"}</strong></div>
+      <div class="propiedad-fila"><span>Banco</span><strong>${escapar(inq.banco) || "—"}</strong></div>
+      <div class="propiedad-fila"><span>IBAN</span><strong>${escapar(inq.iban) || "—"}</strong></div>
+    </div>
+    <div class="propiedad-recibos">
+      <button class="recibo-toggle ${inq.luz_pagado ? "recibo-pagado" : "recibo-pendiente"}" data-suministro="luz" data-id="${inq.id}">
+        <span>💡 Luz · ${eur(inq.luz_importe)}</span>
+        <span>${inq.luz_pagado ? "✅ Pagada" : "❌ Pendiente"}</span>
+      </button>
+      <button class="recibo-toggle ${inq.agua_pagado ? "recibo-pagado" : "recibo-pendiente"}" data-suministro="agua" data-id="${inq.id}">
+        <span>💧 Agua · ${eur(inq.agua_importe)}</span>
+        <span>${inq.agua_pagado ? "✅ Pagada" : "❌ Pendiente"}</span>
+      </button>
+    </div>
+    ${deuda > 0 ? `<p class="propiedad-deuda">Deuda total de recibos: <strong>${eur(deuda)}</strong></p>` : ""}
+  `;
+  abrirModal();
+}
+
+/* Marca/desmarca un recibo (luz o agua) como pagado desde la ficha de propiedad */
+async function toggleSuministro(id, tipo) {
+  if (!credencialesConfiguradas()) return;
+  const inq = inquilinosCache.find((i) => String(i.id) === String(id));
+  if (!inq) return;
+
+  const campo = tipo === "luz" ? "luz_pagado" : "agua_pagado";
+  const { error } = await db.from(TABLA).update({ [campo]: !inq[campo] }).eq("id", id);
+
+  if (error) {
+    console.error("Error al actualizar el recibo:", error);
+    mostrarMensaje("No se pudo actualizar el recibo: " + error.message);
+    return;
+  }
+
+  await cargarInquilinos();
+  verPropiedad(id); // refresca la ficha con el nuevo estado
+}
 
 function abrirModal() { modalHistorial.hidden = false; }
 function cerrarModal() { modalHistorial.hidden = true; }
@@ -815,7 +1044,11 @@ btnExportar.addEventListener("click", () => {
     return;
   }
 
-  const cabeceras = ["Nombre", "Correo", "Telefono", "Importe", "Dia de cobro", "Estado", "Fecha de pago"];
+  const cabeceras = [
+    "Nombre", "Correo", "Telefono", "Importe", "Dia de cobro", "Estado", "Fecha de pago",
+    "Referencia catastral", "Valor propiedad", "Banco", "IBAN",
+    "Importe luz", "Luz pagada", "Importe agua", "Agua pagada", "Deuda de recibos",
+  ];
   const filas = inquilinosCache.map((i) => [
     i.nombre,
     i.correo,
@@ -824,6 +1057,15 @@ btnExportar.addEventListener("click", () => {
     i.dia_cobro,
     i.pagado ? "Pagado" : "Pendiente",
     i.fecha_pago ? fecha(i.fecha_pago) : "",
+    i.ref_catastral || "",
+    i.valor || "",
+    i.banco || "",
+    i.iban || "",
+    i.luz_importe || 0,
+    i.luz_pagado ? "Sí" : "No",
+    i.agua_importe || 0,
+    i.agua_pagado ? "Sí" : "No",
+    deudaRecibos(i),
   ]);
 
   // Escapa comillas y envuelve cada celda

@@ -121,6 +121,30 @@
   }
 
   /* --------------------------------------------------------
+     Almacenamiento simulado de fotos (URLs de objeto locales).
+     Solo dura la sesión del navegador; no persiste tras recargar.
+     -------------------------------------------------------- */
+  window.__demoFotos = window.__demoFotos || {};
+
+  const storage = {
+    from(_bucket) {
+      return {
+        async upload(ruta, archivo) {
+          try {
+            window.__demoFotos[ruta] = URL.createObjectURL(archivo);
+            return { data: { path: ruta }, error: null };
+          } catch (e) {
+            return { data: null, error: { message: e.message } };
+          }
+        },
+        getPublicUrl(ruta) {
+          return { data: { publicUrl: window.__demoFotos[ruta] || "" } };
+        },
+      };
+    },
+  };
+
+  /* --------------------------------------------------------
      Autenticación simulada con usuario/contraseña fijos
      -------------------------------------------------------- */
   const sesionDemo = { user: { email: CRED_USUARIO } };
@@ -161,6 +185,17 @@
       };
     },
 
+    async resetPasswordForEmail() {
+      return {
+        data: {},
+        error: { message: "Modo demo: no se pueden enviar correos. Usa admin / Admin1234." },
+      };
+    },
+
+    async updateUser() {
+      return { data: {}, error: { message: "Modo demo: no se puede cambiar la contraseña." } };
+    },
+
     async signOut() {
       localStorage.removeItem(PREFIJO + "sesion");
       if (this._cb) this._cb("SIGNED_OUT", null);
@@ -174,6 +209,7 @@
     return {
       esDemo: true,
       auth,
+      storage,
       from: (tabla) => new Consulta(tabla),
     };
   };
