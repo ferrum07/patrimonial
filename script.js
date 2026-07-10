@@ -3,8 +3,8 @@
    Rellena estas dos variables con las credenciales de tu proyecto.
    Las encuentras en Supabase → Project Settings → API
    ============================================================ */
-const SUPABASE_URL = "";
-const SUPABASE_ANON_KEY = "";
+const SUPABASE_URL = "https://mrtjbpsqfrapciutcpki.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_EZQnMBx2fi7615U2ah2fDw_RAbot47v";
 
 /* ------------------------------------------------------------
    Inicialización del cliente de Supabase (cargado por CDN)
