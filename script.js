@@ -3,8 +3,8 @@
    Rellena estas dos variables con las credenciales de tu proyecto.
    Las encuentras en Supabase → Project Settings → API
    ============================================================ */
-const SUPABASE_URL = "https://mrtjbpsqfrapciutcpki.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_EZQnMBx2fi7615U2ah2fDw_RAbot47v";
+const SUPABASE_URL = "";
+const SUPABASE_ANON_KEY = "";
 
 /* ------------------------------------------------------------
    Inicialización del cliente de Supabase (cargado por CDN)
@@ -492,8 +492,11 @@ function crearFila(inq) {
   const deudaHtml = deuda > 0
     ? `<span class="deuda-badge">⚡💧 ${eur(deuda)}</span>` : "";
 
+  const refCatastralHtml = inq.ref_catastral
+    ? `<span class="ref-cell">📍 Ref. catastral: ${escapar(inq.ref_catastral)}</span>` : "";
+
   tr.innerHTML = `
-    <td>${escapar(inq.nombre)}${deudaHtml}</td>
+    <td>${escapar(inq.nombre)}${deudaHtml}${refCatastralHtml}</td>
     <td>
       ${escapar(inq.correo)}
       <span class="contacto-sec">· ${escapar(inq.telefono)}</span>
@@ -534,6 +537,7 @@ function crearCard(inq) {
     </div>
     <span class="inq-card-dato">✉️ ${escapar(inq.correo)}</span>
     <span class="inq-card-dato">📞 ${escapar(inq.telefono)}</span>
+    ${inq.ref_catastral ? `<span class="inq-card-dato">📍 Ref. catastral: ${escapar(inq.ref_catastral)}</span>` : ""}
     ${infoPago}
     ${deudaHtml}
     <div class="inq-card-acciones">

@@ -513,6 +513,7 @@ td.col-right  { text-align: right; }
 .contacto-sec { color: var(--texto-secundario); font-size: 0.82rem; }
 .importe-val { font-weight: 700; }
 .fecha-pago { display: block; color: var(--texto-terciario); font-size: 0.7rem; margin-top: 3px; }
+.ref-cell { display: block; color: var(--texto-terciario); font-size: 0.7rem; margin-top: 3px; }
 .acciones-cell { display: flex; gap: 6px; justify-content: center; }
 
 /* Insignia de deuda de recibos pendientes */
